@@ -54,6 +54,73 @@ $siteBanner = \App\Models\Hero::first();
 }
     </style>
 
+    @if (filled($siteBanner?->link_3d))
+    <style>
+        .site-3d-background {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 0 !important;
+            overflow: hidden !important;
+            pointer-events: none !important;
+        }
+
+        .site-3d-background__iframe {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            min-width: 100vw !important;
+            min-height: 100vh !important;
+            border: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: block !important;
+            pointer-events: none !important;
+            z-index: 0 !important;
+            transform: scale(1.05);
+            transform-origin: center center;
+        }
+
+        .site-3d-background__overlay {
+            position: fixed !important;
+            inset: 0 !important;
+            z-index: 1 !important;
+            pointer-events: none !important;
+            background: rgba(24, 24, 24, 0.15) !important;
+        }
+
+        .site-3d-background__spline-mask {
+            position: fixed !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            left: auto !important;
+            z-index: 2 !important;
+            width: 240px !important;
+            height: 72px !important;
+            pointer-events: none !important;
+            background: linear-gradient(
+                315deg,
+                rgba(24, 24, 24, 0.98) 0%,
+                rgba(24, 24, 24, 0.85) 45%,
+                rgba(24, 24, 24, 0) 100%
+            ) !important;
+        }
+
+        body.has-site-3d-bg {
+            background: transparent !important;
+        }
+
+        body.has-site-3d-bg .boxed_wrapper {
+            position: relative !important;
+            z-index: 10 !important;
+            background: transparent !important;
+        }
+    </style>
+    @endif
+
     @foreach ($AddingScripts as $script)
     {!! $script->script !!}
     @endforeach
@@ -71,7 +138,8 @@ $siteBanner = \App\Models\Hero::first();
             src="{{ $siteBanner->link_3d }}"
             loading="lazy"
             frameborder="0"
-            allowfullscreen></iframe>
+            allowfullscreen
+            style="position:fixed;top:0;left:0;width:100vw;height:100vh;border:0;"></iframe>
         <div class="site-3d-background__overlay"></div>
         <div class="site-3d-background__spline-mask"></div>
     </div>
