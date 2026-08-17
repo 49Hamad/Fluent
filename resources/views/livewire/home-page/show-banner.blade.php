@@ -28,12 +28,16 @@
       <i class="icon-3"></i>
     </a>
   @endif
+    @if(isset($Consulting->is_active) && $Consulting->is_active == true)
     <a href="{{ $Banner->button_link }}" class="mx-5 theme-btn"><span>{{ $Banner->button_text }}</span></a>
+    @endif
 </div>
 
 <!-- For phones only -->
 <div class="btn-box d-flex d-md-none flex-column">
+    @if(isset($Consulting->is_active) && $Consulting->is_active == true)
     <a href="{{ $Banner->button_link }}" class="mx-5 theme-btn"><span>{{ $Banner->button_text }}</span></a>
+    @endif
     @if(isset($Banner->is_button_video) && $Banner->is_button_video == true)
     <a href="javascruot:viod()" class="video-btn"  onclick="openVideoModal('{{ $Banner->button_video_link ?? null }}')">
       <i class="icon-3"></i>

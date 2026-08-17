@@ -9,11 +9,13 @@
                             {{ $why_choose_us->description }}
                         </p>
 
+                        @if(isset($Consulting->is_active) && $Consulting->is_active == true)
                         <div class="mb-5 text-center btn-box">
                             <a href="{{ $why_choose_us->button_link }}" class="mx-5 mt-3 theme-btn rounded-5">
                                 <span>{{ $why_choose_us->button_text }}</span>
                             </a>
                         </div>
+                        @endif
                     </div>
                     <!-- Left side with checkboxes -->
                     <div class="text-center col-lg-6 col-md-12 moveToRight">
@@ -60,11 +62,13 @@
 
                         </div>
                     </div>
+                    @if(isset($Consulting->is_active) && $Consulting->is_active == true)
                     <div class="mb-5 text-center btn-box">
                         <a href="{{ $why_choose_us->button_link }}" class="mx-5 mt-3 theme-btn rounded-5">
                             <span>{{ $why_choose_us->button_text }}</span>
                         </a>
                     </div>
+                    @endif
                 </div>
 
             </div>
