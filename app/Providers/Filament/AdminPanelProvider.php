@@ -56,6 +56,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('front/assets/images/logo-dark.jpg'))
             ->brandLogoHeight('1.5rem')
             ->id('admin')
+            ->profile()
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder->groups([
                     NavigationGroup::make('الموظفين')
