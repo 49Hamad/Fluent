@@ -1,7 +1,8 @@
 <div>
     <livewire:home-page.show-banner /> 
     {{-- Start About US --}}
-    <livewire:home-page.about.show-about-us-page /> 
+    {{-- <livewire:home-page.about.show-about-us-page />  --}}
+    
     <livewire:home-page.about.show-why-choose-us-page /> 
     <livewire:home-page.about.show-number-talk-page /> 
     {{-- End About US  --}}
