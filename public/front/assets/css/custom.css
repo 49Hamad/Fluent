@@ -1,0 +1,165 @@
+.glass-section-about-us{position:relative!important;background-image:url('../../assets/images/bluer-image-2.png');background-repeat:no-repeat;background-size:cover;background-position:center;padding:150px 50px}
+.glass-section-counters{position:relative!important;background-image:url('../../assets/images/bluer-image-2.png');background-repeat:no-repeat;background-size:cover;background-position:center;padding:90px 50px}
+@media (max-width:768px){.glass-section-about-us{padding:20px}}
+.glass-card{background:rgba(255,255,255,0.1);border-radius:20px;padding:5rem 2rem;margin:auto;text-align:center;line-height:3rem;position:relative;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);z-index:3}
+.glass-card::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;padding:10px 0;background-image:url('../../assets/images/Fluent-LogoMark-Light-RGB.png');background-repeat:no-repeat;background-size:300px;background-position:center;opacity:0.05;z-index:1}
+.glass-card p{position:relative;font-size:1.1rem;z-index:2}
+@media (max-width:768px){.glass-card p{font-size:1rem}}
+/* Styling for the Tab Links */
+.nav-tabs .nav-link{color:#fff;font-size:1.1rem;padding:0.5rem 1rem;border-radius:0.5rem;background-color:transparent}
+/* Styling for the Tab Links */
+.nav-tabs .nav-link{color:#fff;font-size:1.1rem;padding:0.5rem 1rem;border-radius:0.5rem;background-color:transparent}
+/* Responsive alignment for the Tab Container */
+.tabs-container{max-width:700px;margin:20px auto}
+@media (max-width:768px){.tabs-container{max-width:100%;padding:0 15px}}
+/* Styling the tab links */
+.nav-tabs{background:rgba(255,255,255,0.1);border:none;border-radius:30px;width:fit-content}
+.nav-tabs .nav-link{border-radius:30px;padding:11px 39px;color:#ffc107b3;background-color:transparent;border:none;font-size:1.2rem}
+.nav-tabs .nav-link.active{color:#ffc107;background-color:transparent;background-image:url('../../assets/images/bluer-image-2.png');background-repeat:no-repeat;background-position:center;background-size:300px;position:relative}
+/* Make the tabs fully responsive */
+@media (max-width:768px){.nav-tabs{justify-content:center;/* Center the tabs on mobile screens */}.nav-tabs .nav-link{font-size:1rem;padding:10px 20px;width:100%;/* Full width on mobile */        text-align:center}}
+/*  Start Why Us Section  */
+.features-section-text{position:relative;z-index:2;/* Ensure text is above the background */
+    overflow:hidden;/* Prevent the pseudo-element from overflowing */
+    padding:0;/* Remove padding if any */
+    margin:0;/* Remove margin if any */
+    background:transparent;/* Ensure no background color is applied */}
+.features-section-text::after{position:absolute;content:'';top:27px;right:-34px;background:url(../../assets/images/bluer-image-3.png) no-repeat center center;background-size:cover;z-index:-1;width:400px;height:400px;border-radius:50%;opacity:1;border:none}
+/* Features Section */
+.features-section{padding:100px 0;position:relative}
+.features-section::after{position:absolute;content:'';bottom:-200px;left:-250px;background:url(../../assets/images/bluer-image-3.png) no-repeat center center;background-size:cover;z-index:-1;width:500px;height:500px;border-radius:50%;opacity:1;border:none}
+.features-section h1{font-weight:bold;color:#ffc107}
+.features-section p{color:#fff}
+/* Glassmorphism Effect */
+.feature-box{background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);border:3px solid transparent;border-image:url("../../assets/images/between.png") 30 stretch;box-shadow:0 8px 32px 0 rgba(0,0,0,0.37);transition:transform 0.3s ease;width:fit-content}
+.feature-box:hover{transform:translateY(-5px)}
+.feature-box:nth-child(even){transform:translateX(-100px)}
+.feature-box:nth-child(even):hover{transform:translateX(-100px) translateY(-5px)}
+.check-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+/* Responsiveness */
+@media (max-width:768px){.features-section{padding:50px 20px}.feature-box{text-align:center}}
+.moveToRight{position:relative;right:134px}
+/* add the counters    */
+
+/* Full screen background image */
+.background{background-image:url('./../assets/images/Fluent-LogoMark-Light-RGB.png');/* Replace with your image path */
+    background-size:cover;background-position:center;height:50vh;position:relative}
+.background::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;padding:10px 0;background-image:url('../../assets/images/Fluent-LogoMark-Light-RGB.png');background-repeat:no-repeat;background-size:800px;background-position:center;opacity:0.05;z-index:-4}
+/* Dark overlay */
+.overlay{height:100%;display:flex;justify-content:center;align-items:center}
+/* Content styling */
+.content{position:relative;z-index:2}
+/* Info boxes */
+.info-box{background-color:rgba(255,255,255,0.1);padding:20px;border-radius:8px;margin:10px;color:white}
+.info-box .icon{font-size:2rem;margin-bottom:10px}
+h3{font-size:3rem;margin:0}
+/* Start Our Services  */
+.pattern-layer{background-image:url('../../assets/images/background-slider-serivces.png');background-position:center}
+.pattern-layer-2{background-image:url('../../assets/images/backgound-2.png');background-position:top;background-size:contain;background-clip:padding-box;background-size:auto;position:relative;overflow:hidden}
+.pattern-layer-2::after{content:'';position:absolute;top:0%;left:1%;bottom:0;width:100%;height:100%;background-image:url('../../assets/images/bluer-image-3.png');background-position:top;background-size:contain;background-clip:padding-box;background-size:auto;background-repeat:no-repeat}
+.container{position:relative;z-index:1}
+.sub-title-two{color:#ffc107;font-size:24px;font-weight:bold;display:block;width:fit-content;margin:50px auto}
+.section-title{font-size:2.5rem;font-weight:700;color:#ffffff;margin-top:0.5rem;margin-bottom:40px}
+.services-carousel .owl-stage-outer{padding:60px 0;overflow:visible}
+.service-card{position:relative;overflow:hidden;border-radius:15px;transition:all 0.3s ease;transform:scale(0.9);box-shadow:0 10px 20px rgba(0,0,0,0.1)}
+.service-card img{width:100%;height:auto;object-fit:cover;transition:all 0.3s ease}
+.service-card::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.1);backdrop-filter:blur(5px);transition:all 0.3s ease}
+.services-carousel .owl-item.center .service-card{transform:scale(1.0);z-index:2}
+.services-carousel .owl-item.center .service-card::after{opacity:0}
+.service-info{position:absolute;bottom:0;right:0;padding:20px;border-radius:15px;transform:translateY(100%);transition:all 0.3s ease}
+.service-info h3,.service-info p{color:#000}
+.services-carousel .owl-item.center .service-info{transform:translateY(0)}
+.service-title{font-size:1rem;font-weight:bold;margin-bottom:23px}
+.service-description{font-size:0.9rem;opacity:0.8}
+.owl-nav button{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.5)!important;color:#000!important;font-size:2rem!important;padding:10px 15px!important;border-radius:50%!important;transition:all 0.3s ease}
+.owl-nav button:hover{background:#F7C800!important}
+.owl-prev{left:0}
+.owl-next{right:0}
+.client-background-color{position:relative;overflow:hidden;z-index:2}
+.client-background-color::after{content:'';position:absolute;top:2%;border-radius:37px;left:33%;bottom:0;width:156%;height:100%;overflow:hidden;background-image:url('../../assets/images/bluer-image-3.png');background-position:top;background-size:contain;background-clip:padding-box;background-size:auto;background-repeat:no-repeat}
+.owl-dots-none .owl-dots,.owl-nav-none .owl-nav{text-align:center;padding:10px;border-radius:50%}
+.owl-theme .owl-dots .owl-dot.active span{background:none repeat scroll 0 0 #f7c800;border-radius:50%;width:25px;height:25px}
+.owl-theme .owl-dots .owl-dot span{background:none repeat scroll 0 0 #ffffff5e;border-radius:50%;width:25px;height:25px}
+.owl-dots{text-align:center;padding:48px 0 0 0}
+/* Start Our  achievements  */
+.background-achievements{position:relative!important;background-image:url('../../assets/images/Imafgdggfe@2x.png');background-repeat:no-repeat;background-size:cover;background-position:center;padding:100px 50px}
+@media (max-width:768px){.background-achievements{padding:20px}}
+.info-box{border:1px solid #ffd70078;padding:15px;margin-bottom:20px;min-height:100px;position:relative;overflow:hidden}
+.info-box{background-color:rgb(255 255 255 / 4%);padding:20px;border-radius:8px;margin:10px;width:100%;margin:10px 0;aspect-ratio:3 / 2;align-items:center;justify-content:center;display:flex}
+.info-box::before{content:attr(data-number);position:absolute;top:50%;left:80%;transform:translate(-50%,-50%);font-size:120px;font-weight:bold;color:transparent;/* Make the text transparent */
+    -webkit-text-stroke:1px rgb(255,255,255);/* Stroke width and color */
+    opacity:0.1;z-index:0}
+/* start contact us  */
+.glass-card{background:rgba(255,255,255,0.1);border-radius:16px;padding:20px;color:white;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2)}
+.map-placeholder{background-color:#ccc;height:250px}
+.icon-bg{background-color:#ffc107;border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;margin-right:15px;transition:all 0.3s ease}
+.glass-card:hover .icon-bg{transform:scale(1.1)}
+.icon-bg i{color:black}
+.form-control:focus,.form-select:focus,input{background-color:transparent;box-shadow:none;border-color:rgb(255 255 255 / 20%);padding:10px;color:#ffffff;font-size:15px}
+.form-control,.form-select{background-color:transparent;border:1px solid rgba(255,255,255,0.1);color:white;transition:all 0.3s ease;padding:10px;font-size:15px}
+.btn-custom{background-color:#ffc107;color:black;transition:all 0.3s ease}
+.btn-custom:hover{background-color:#e0a800;transform:translateY(-2px);box-shadow:0 4px 12px rgba(255,193,7,0.3)}
+.form-select option{background-color:transparent;color:#333}
+.single-info-box{position:relative;display:block;text-align:center;border:solid;border-width:1px;border-color:rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);margin-bottom:30px;padding:20px;border-radius:10px;transition:all 500ms ease}
+.single-info-box:hover{border-color:var(--theme-color)}
+.single-info-box:last-child{margin-bottom:0}
+.single-info-box .icon-box{position:relative;display:inline-block;width:80px;height:80px;line-height:80px;background:var(--theme-color);text-align:center;border-radius:50%;margin-bottom:25px;font-size:35px;color:#000}
+.single-info-box p{font-size:20px;line-height:35px;color:#fff;font-weight:500}
+.single-info-box p a{display:inline-block;color:#fff}
+.single-info-box p a:hover{color:var(--theme-color)}
+.content-box{position:relative;display:block;margin-left:80px}
+.map-box{margin-bottom:50px;border-radius:12px;overflow:hidden}
+.map-box iframe{position:relative;display:block;width:100%;height:295px}
+/* start my footer    */
+  .footer-section-image{background:url('../../assets/images/between.png') no-repeat center center;background-size:cover;color:#fff;padding:20px 0;text-align:center}
+.fab{color:#f7c800;padding:10px;font-size:22px;cursor:pointer}
+.modal-title{margin-bottom:0;line-height:1.043m;color:#ffd605;font-weight:bolder;font-size:1rem!important}
+/* start the services cards  */
+  .custom-card{width:320px;height:500px;position:relative;box-sizing:border-box;display:flex;margin:auto;scroll-behavior:smooth;flex-direction:column;justify-content:space-between;align-items:center}
+.custom-card svg{position:absolute;width:fit-content;height:fit-content;z-index:0}
+.main-border{stroke:#F7C800;stroke-width:1.5;fill:none}
+.arrow-container{position:absolute;top:0;left:6px;width:56px;height:56px;z-index:1;border:1px solid #F7C800;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:transform 0.3s ease-in-out}
+.arrow-container svg{width:70%;height:70%;fill:#F7C800;transform:rotate(45deg);transition:0.3s all ease-in-out;padding:8px}
+.card-content{z-index:2;width:100%;position:absolute;bottom:0;right:16px}
+.card-content a{text-decoration:none;color:#ffffff;font-size:16px;position:relative;transition:0.3s all 0.3s ease-in-out}
+.card-content a:hover{color:#F7C800}
+.card-top-service{position:absolute;content:'';bottom:115px;z-index:1000;right:25px}
+.card-top-service-image{width:70%;position:absolute;content:'';top:20%;z-index:100}
+.custom-card:hover .main-border{stroke:#F7C800;stroke-width:1.5;fill:#3d361424}
+.custom-card:hover   .arrow-container .rotate-svg{transform:rotate(5deg)}
+/* end the services cards  */
+  .show-lg{display:none}
+.show-lgs{display:none}
+.show-md-sm{display:none}
+.show-md-sms{display:none}
+@media (min-width:992px){/* lg screens and up */    .show-lg{display:block}.show-lgs{display:flex}.modal-title{margin-bottom:0;line-height:1.043m;color:#ffd605;font-weight:bolder;font-size:1rem!important}}
+@media (max-width:991.98px){.fs-5{font-size:14px!important}h3,h4,h5,h6,p{font-size:14px!important}h2{font-size:15px!important}.background::after{background-size:610px}.features-section-text::after{position:absolute;content:'';top:-1px;right:-26px;background-size:cover;z-index:-1;width:300px;height:300px;border-radius:50%;opacity:1;border:none;padding-bottom:10px}.show-md-sms{display:flex}.show-md-sm{display:block}.show-section-md-sm-box{background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);border:3px solid transparent;border-image:url("../../assets/images/between.png") 30 stretch;box-shadow:0 8px 32px 0 rgba(0,0,0,0.37);transition:transform 0.3s ease;width:100%;text-align:center}.show-section-md-sm-box:hover{transform:translateY(-5px)}.show-section-md-sm-box:nth-child(even){transform:translateX(0px)}.show-section-md-sm-box:nth-child(even):hover{transform:translateX(0px) translateY(-5px)}.p-3.mb-4.rounded.col-md-6.col-sm-12.d-flex.align-items-center.show-section-md-sm-box{margin:0 0 0 35px}.modal-title{margin-bottom:0;line-height:1.043m;color:#ffd605;font-weight:bolder;font-size:1rem!important}}
+/* Responsive design for Navbar logo on mobile */
+
+/* Styles for phones */
+@media only screen and (max-width:768px){a.btn.btn-warning.rounded-5.px-5.py-3.mt-4.button-console-action{position:relative;z-index:100}.service-card{width:70%!important;margin:auto}.arrow-container{left:0}.home-three-banner .content-box{margin-bottom:0;position:relative;top:130px;/* Adjusted for phone */}.banner-two .content-box h2{font-size:24px;/* Smaller font size for phones */}.banner-two .content-box .btn-box .video-btn{top:50px}.button-console-action{right:70px}.modal-title{margin-bottom:0;line-height:1.043m;color:#ffd605;font-weight:bolder;font-size:1rem!important}}
+/* Styles for tablets */
+@media only screen and (max-width:1024px) and (min-width:769px){a.btn.btn-warning.rounded-5.px-5.py-3.mt-4.button-console-action{position:relative;z-index:100}.funfact-three .text-box h2{font-size:34px!important}.service-card{width:70%!important;margin:auto}.arrow-container{left:0}.modal-title{margin-bottom:0;line-height:1.043m;color:#ffd605;font-weight:bolder;font-size:1rem!important}.p-3.mb-4.rounded.col-md-6.col-sm-12.d-flex.align-items-center.show-section-md-sm-box{margin:0 0 0 35px}.home-three-banner .content-box{margin-bottom:0;position:relative;top:390px;/* Adjusted for tablet */}.banner-two .content-box h2{font-size:33px;/* Larger font size for tablets */}}
+@media only screen and (max-width:800px){.background::after{background-image:none}.funfact-three .text-box h2{font-size:34px!important}.p-3.mb-4.rounded.col-md-6.col-sm-12.d-flex.align-items-center.show-section-md-sm-box{margin:0 0 0 35px}.service-card{width:70%!important;margin:auto}.arrow-container{left:0}.modal-title{margin-bottom:0;line-height:1.043m;color:#ffd605;font-weight:bolder;font-size:1rem!important}.menu-outer{position:relative;z-index:100}.mobile-menu .menu-box{position:absolute;left:0;top:0;width:100%;height:100%;max-height:100%;overflow-y:auto;background-color:#000;padding:0;z-index:5;opacity:0;visibility:hidden;border-radius:0;transform:translateX(100%);transition:transform 300ms ease,opacity 300ms ease}.mobile-menu .menu-box::after{content:"";position:absolute;top:0;left:0;width:100%;height:100%;background:url('../../assets/images/backgound-2.png') no-repeat center center;background-size:cover;color:#fff}.mobile-menu .nav-logo{position:relative;padding:42px 25px;text-align:right;padding-bottom:8px;z-index:100}.mobile-menu .nav-logo img{width:100%;max-width:72%;padding:0;margin:0;height:fit-content;z-index:100}.button-console-none{display:none}}
+@media only screen and (max-width:599px){.funfact-three .text-box h2{font-size:25px!important}.background::after{background-image:none}a.btn.btn-warning.rounded-5.px-5.py-3.mt-4.button-console-action{position:relative;z-index:100}.p-3.mb-4.rounded.col-md-6.col-sm-12.d-flex.align-items-center.show-section-md-sm-box{margin:0 0 0 35px}.modal-title{margin-bottom:0;line-height:1.043m;color:#ffd605;font-weight:bolder;font-size:1rem!important}.menu-outer{position:relative;z-index:100}.mobile-menu .menu-box{position:absolute;left:0;top:0;width:100%;height:100%;max-height:100%;overflow-y:auto;background-color:#000;padding:0;z-index:5;opacity:0;visibility:hidden;border-radius:0;transform:translateX(100%);transition:transform 300ms ease,opacity 300ms ease}.mobile-menu .menu-box::after{content:"";position:absolute;top:0;left:0;width:100%;height:100%;background:url('../../assets/images/Imafgdggfe@2x.png') no-repeat center center;background-size:cover;color:#fff;opacity:0.5;/* Optional:Adjust opacity for effect */}.mobile-menu .nav-logo{position:relative;padding:42px 25px 8px;text-align:right}.mobile-menu .nav-logo img{width:100%;max-width:60%;height:auto;padding:0;margin:0}/* Hide console button on small screens */    .button-console-none{display:none}}
+.funfact-three .text-box h2{font-size:34px!important}
+/* Responsive Hero Section */
+.funfact-three{position:relative;padding:0 0}
+@media only screen and (max-width:599px){.background::after{background-image:none}.funfact-three .text-box h2{font-size:25px!important}.p-3.mb-4.rounded.col-md-6.col-sm-12.d-flex.align-items-center.show-section-md-sm-box{margin:0 0 0 35px}.modal-title{margin-bottom:0;line-height:1.043m;color:#ffd605;font-weight:bolder;font-size:1rem!important}.glass-section-counters{position:relative!important;background-image:url('../../assets/images/bluer-image-2.png');background-repeat:no-repeat;background-size:cover;background-position:center;padding:100px 50px}.clients-section{background-color:#ffffff00;margin-top:80px}.clients-section .clients-box img{position:relative;display:block;margin:0 auto;filter:brightness(0) invert(1);transition:all 0.3s ease-in-out 0.1s;object-fit:contain;width:100%;z-index:101;aspect-ratio:2 / 2;background-color:transparent;border-radius:10px}.funfact-three .funfact-block .count-outer{position:relative;display:block;font-size:30px;line-height:1.5rem;font-weight:700;color:#fff;margin-bottom:0;transition:all 500ms ease}.funfact-three .text-box h2{font-size:22px;line-height:50px;font-weight:600;margin-bottom:40px}.funfact-three .text-box p{font-size:14px;line-height:32px}.background::after{background-size:300px}.banner-two .content-box h2{font-size:25px;line-height:43px}}
+.content-box{position:relative;display:block;margin-left:0}
+@media only screen and (max-width:499px){.banner-two .content-box .btn-box .theme-btn{display:block;margin-right:0;margin-bottom:0;top:0}.p-3.mb-4.rounded.col-md-6.col-sm-12.d-flex.align-items-center.show-section-md-sm-box{margin:0 0 0 35px}.modal-title{margin-bottom:0;line-height:1.043m;color:#ffd605;font-weight:bolder;font-size:1rem!important}}
+/* "الأرقام تتحدث عنا" Section */
+@media (max-width:768px){.glass-section-about-us{padding:20px;/* Optional padding adjustment */}.p-3.mb-4.rounded.col-md-6.col-sm-12.d-flex.align-items-center.show-section-md-sm-box{margin:0 0 0 35px}}
+.modal-title{margin-bottom:0;line-height:1.043m;color:#ffd605;font-weight:bolder;font-size:1rem!important}
+/* Contact Us Section */
+.modal-header{display:block;flex-shrink:0;align-items:center;justify-content:space-between;padding:var(--bs-modal-header-padding);border-bottom:0;text-align:center}
+.modal-header .btn-close{position:relative;background:none!important;opacity:1;float:left;top:-32px}
+.modal-title{margin-bottom:0;line-height:1.043m;color:#ffd605;font-weight:bolder;font-size:2.0rem!important}
+.modal-body{position:relative;flex:1 1 auto;padding:0 50px}
+.white-box-logo .owl-item{position:relative;min-height:1px;float:left;/* top:10px;*/
+    margin-top:30px;-webkit-backface-visibility:hidden;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-color:transparent!important;border-radius:10px;padding:10px}
+.custom-card-services .owl-item{margin-right:20px!important}
+.modal-title{margin-bottom:0;line-height:1.043m;color:#ffd605;font-weight:bolder;font-size:1rem!important}
+@media only screen and (max-width:1200px){.button-console-none{display:none}}
+.modal-body h1,.modal-body h2,.modal-body h3,.modal-body h4{font-size:14px!important;line-height:1.2rem}
+@media screen and (max-width:1344px) and (max-height:1200px){.home-three-banner .content-box{position:relative;top:80px}section.text-center.banner-two.home-three-banner{height:120vh!important}}

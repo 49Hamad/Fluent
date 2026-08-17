@@ -1,0 +1,64 @@
+<IfModule mod_rewrite.c>
+
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    ########################################
+    # 1️⃣ منع تنفيذ أي ملف PHP مباشر
+    ########################################
+    <FilesMatch "\.php$">
+        Order Allow,Deny
+        Deny from all
+    </FilesMatch>
+
+    # السماح فقط بـ index.php
+    <Files "index.php">
+        Order Allow,Deny
+        Allow from all
+    </Files>
+    
+#     <FilesMatch "\.(js|css)$">
+#     ForceType text/plain
+#     Header set Content-Type "text/plain; charset=UTF-8"
+# </FilesMatch>
+
+
+    ########################################
+    # 2️⃣ السماح بالملفات الثابتة فقط
+    ########################################
+    # RewriteRule \.(css|js|png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|map)$ - [L]
+
+    ########################################
+    # 3️⃣ منع أي PHP آخر حتى لو حاولوا استدعاءه
+    ########################################
+    RewriteRule \.php$ - [F]
+
+    ########################################
+    # 4️⃣ تحويل كل الطلبات إلى public
+    ########################################
+    RewriteRule ^(.*)$ public/$1 [L]
+
+    ########################################
+    # 5️⃣ تمرير Authorization Header
+    ########################################
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    ########################################
+    # 6️⃣ إزالة / الزائدة
+    ########################################
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    ########################################
+    # 7️⃣ Laravel Front Controller
+    ########################################
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+
+</IfModule>
