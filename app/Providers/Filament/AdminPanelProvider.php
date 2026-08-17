@@ -95,7 +95,7 @@ class AdminPanelProvider extends PanelProvider
 
                         NavigationGroup::make('إعدادات النظام')
                         ->items([
-                            ...FilamentGoogleAnalyticsDashboard::getNavigationItems(),
+                            // ...FilamentGoogleAnalyticsDashboard::getNavigationItems(),
                             ...SettingResource::getNavigationItems(),
                             ...AddingScriptResource::getNavigationItems(),
                         ]),
@@ -118,7 +118,7 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
                 ])
                 ->plugins([
-                    \BezhanSalleh\FilamentGoogleAnalytics\FilamentGoogleAnalyticsPlugin::make(),
+                    // \BezhanSalleh\FilamentGoogleAnalytics\FilamentGoogleAnalyticsPlugin::make(),
                     FilamentApexChartsPlugin::make(),
                     FilamentShieldPlugin::make()
                     ->gridColumns([
