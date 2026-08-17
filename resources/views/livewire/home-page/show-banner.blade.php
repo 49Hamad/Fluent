@@ -2,12 +2,7 @@
     @if (isset($Banner) && $Banner != null)
 
 
-    <section class="text-center banner-two home-three-banner" style="height: 100vh; overflow:hidden;">
-        <div class="pattern-layer">
-            <iframe class="pattern-1"
-                src='{{ $Banner->link_3d }}' loading="lazy"
-                frameborder='0' style="height: 140vh;" width='100%'></iframe>
-        </div>
+    <section class="text-center banner-two home-three-banner">
         <div class="auto-container">
             <div class="content-box">
                 <br>

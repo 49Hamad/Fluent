@@ -44,6 +44,7 @@ class HeroResource extends Resource
                     ->maxLength(100),
                 Forms\Components\TextInput::make('link_3d')
                 ->label('رابط 3D')
+                    ->helperText('استخدم رابط Embed من Spline. لإزالة شعار "Built with Spline" رسمياً: Export → Play Settings → Hide Spline Logo (يتطلب اشتراك Starter أو أعلى).')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('button_text')

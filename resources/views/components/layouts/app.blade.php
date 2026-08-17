@@ -1,6 +1,7 @@
 
 @php
 $AddingScripts = \App\Models\AddingScript::where('status',1)->get();
+$siteBanner = \App\Models\Hero::first();
 @endphp
 
 <!DOCTYPE html>
@@ -62,7 +63,19 @@ $AddingScripts = \App\Models\AddingScript::where('status',1)->get();
 
 <!-- Boxed Wrapper -->
 
-<body dir="rtl">
+<body dir="rtl" @class(['has-site-3d-bg' => filled($siteBanner?->link_3d)])>
+
+@if (filled($siteBanner?->link_3d))
+    <div class="site-3d-background" aria-hidden="true">
+        <iframe class="site-3d-background__iframe"
+            src="{{ $siteBanner->link_3d }}"
+            loading="lazy"
+            frameborder="0"
+            allowfullscreen></iframe>
+        <div class="site-3d-background__overlay"></div>
+        <div class="site-3d-background__spline-mask"></div>
+    </div>
+@endif
 
 
 
