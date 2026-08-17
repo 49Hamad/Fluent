@@ -74,7 +74,7 @@ $AddingScripts = \App\Models\AddingScript::where('status',1)->get();
             <div class="outer-container">
                 <div class="outer-box">
                     <div class="logo-box">
-                        <figure class="logo"><a href="{{ route('home') }}"><img src="{{ asset('storage/'. $setting->headerlogo) }}" width="200" alt="شعار الشركة"></a></figure>
+                        <figure class="logo"><a href="{{ route('home') }}"><img src="{{ asset('storage/'. $setting->headerlogo) }}" width="70" alt="شعار الشركة"></a></figure>
                     </div>
                     <div class="menu-area">
                         <div class="mobile-nav-toggler">
@@ -108,7 +108,7 @@ $AddingScripts = \App\Models\AddingScript::where('status',1)->get();
                 <div class="container">
                     <div class="outer-box">
                         <div class="logo-box">
-                            <figure class="logo"><a href="{{ route('home') }}"><img src="{{ asset('storage/'. $setting->headerlogo) }}" width="200" alt="شعار الشركة"></a>
+                            <figure class="logo"><a href="{{ route('home') }}"><img src="{{ asset('storage/'. $setting->headerlogo) }}" width="70" alt="شعار الشركة"></a>
                             </figure>
                         </div>
                         <div class="menu-area">
@@ -133,7 +133,7 @@ $AddingScripts = \App\Models\AddingScript::where('status',1)->get();
             <div class="menu-backdrop"></div>
             <div class="close-btn"><i class="fas fa-times"></i></div>
             <nav class="menu-box">
-                <div class="nav-logo"><a href="{{ route('home') }}"><img src="{{ asset('storage/'. $setting->headerlogo) }}" width="50" alt="شعار الشركة" title=""></a></div>
+                <div class="nav-logo"><a href="{{ route('home') }}"><img src="{{ asset('storage/'. $setting->headerlogo) }}" width="20" alt="شعار الشركة" title=""></a></div>
                 <div class="menu-outer"><!--Here Menu Will Come Automatically Via Javascript / Same Menu as in Header-->
                 </div>
                 @if (isset($Consulting->is_active) && $Consulting->is_active == true)
@@ -199,7 +199,7 @@ $AddingScripts = \App\Models\AddingScript::where('status',1)->get();
 
                     <!-- Logo Text in Arabic -->
                     <div class="text-center col-md-4">
-                        <img class="logo" src="{{ asset('storage/'. $setting->headerlogo) }}" width="200" alt="شعار الشركة" title="">
+                        <img class="logo" src="{{ asset('storage/'. $setting->headerlogo) }}" width="70" alt="شعار الشركة" title="">
                     </div>
                 </div>
             </div>
