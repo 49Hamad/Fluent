@@ -68,6 +68,7 @@ class ShowContactUslPage extends Component
         $Setting = Setting::first();
         $extraServices = ExtraService::where('is_active',true)->get();
         $ContactText = ContactText::first() ?? null;
-        return view('livewire.home-page.show-contact-usl-page',compact('Setting','ContactText','extraServices'));
+        // Redesign: same data, new Fluent skin (old view kept in show-contact-usl-page.blade.php)
+        return view('livewire.home-page.redesign.contact',compact('Setting','ContactText','extraServices'));
     }
 }
