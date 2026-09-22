@@ -4,7 +4,7 @@
    New rules only. Nothing here overrides the approved prototype
    rules in fluent-site.css / fluent-forms.css; it only styles the
    sections that exist in the Laravel site but not in the prototype
-   (achievements, contact form), built
+   (contact form, review-mode screens), built
    strictly from the prototype's own tokens and components.
    ============================================================ */
 
@@ -29,41 +29,6 @@
 @media(max-width:360px){
   .proof-grid{grid-template-columns:1fr}
   .pstat.span-2-2{grid-column:auto}
-}
-
-/* ============================================================
-   Achievements & milestones
-   Same language as the "journey" rows and the gap "bridge":
-   a thin line that draws itself, milestones that light up in turn.
-   ============================================================ */
-.ach{background:var(--surface);border-block:1px solid var(--line)}
-.ach-head{display:grid;grid-template-columns:1.15fr .85fr;align-items:end;gap:clamp(1.6rem,4vw,4rem);margin-bottom:clamp(3rem,5vw,4.5rem)}
-.ach-head h2{margin-top:1.4rem}
-.ach-head .lead{max-width:38ch}
-@media(max-width:820px){.ach-head{grid-template-columns:1fr}}
-
-.miles{position:relative;display:grid;grid-template-columns:repeat(var(--n,4),1fr);gap:clamp(1rem,2vw,2rem)}
-.miles::before{
-  content:"";position:absolute;inset-inline:0;top:7px;height:1px;background:var(--line-strong);
-}
-.miles::after{
-  content:"";position:absolute;inset-inline:0;top:7px;height:1px;background:var(--signal);
-  transform:scaleX(0);transform-origin:100% 50%;transition:transform 1.8s var(--ease);
-}
-.miles.in::after{transform:scaleX(1)}
-.mile{position:relative;padding-top:2.2rem;display:flex;flex-direction:column;gap:.7rem}
-.mile-dot{position:absolute;top:0;inset-inline-start:0;width:15px;height:15px;border-radius:50%;background:var(--surface);border:1px solid var(--line-strong);transition:border-color .6s,background .6s,box-shadow .6s;transition-delay:var(--md,0ms)}
-.miles.in .mile-dot{border-color:var(--signal);background:var(--signal);box-shadow:0 0 0 5px rgba(247,200,0,.12)}
-.mile-k{font-size:.78rem;color:var(--muted-2);letter-spacing:.1em}
-.mile-t{font-size:clamp(1.02rem,1.35vw,1.2rem);font-weight:600;line-height:1.55;max-width:26ch}
-@media(max-width:900px){
-  .miles{grid-template-columns:1fr;gap:0}
-  .miles::before,.miles::after{inset-inline:auto;inset-inline-start:7px;top:.5rem;bottom:.5rem;width:1px;height:auto}
-  .miles::after{transform:scaleY(0);transform-origin:50% 0}
-  .miles.in::after{transform:scaleY(1)}
-  .mile{padding-top:0;padding-inline-start:2.4rem;padding-bottom:2rem}
-  .mile:last-child{padding-bottom:0}
-  .mile-dot{top:.35rem}
 }
 
 /* ============================================================
@@ -99,8 +64,6 @@ a.cinfo-v:hover{color:var(--signal)}
 .fl-wrapper,.fl-wrapper *{font-family:var(--font)!important}
 
 @media(prefers-reduced-motion:reduce){
-  .miles::after{transition:none!important;transform:none!important}
-  .mile-dot{transition:none!important}
   .socials a{transition:none}
   .socials a:hover{transform:none}
 }
