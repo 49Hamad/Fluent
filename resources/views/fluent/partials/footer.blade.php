@@ -4,9 +4,8 @@
 --}}
 @php
     $home      = request()->routeIs('home') ? '' : route('home');
-    $address   = collect($setting?->Address ?? []);
-    $ftEmail   = $address->firstWhere('social_type', 'email')['name'] ?? null;
-    $ftPhone   = $address->firstWhere('social_type', 'phone')['name'] ?? null;
+    $ftEmail   = \App\Support\FluentContact::email();
+    $ftPhone   = \App\Support\FluentContact::phone();
     $ftLogo    = $setting?->footerlogo ?: $setting?->headerlogo;
     $ftSocials = collect($setting?->social_links ?? [])->filter(fn ($l) => filled($l['name'] ?? null));
     $socialLabels = [
@@ -57,7 +56,7 @@
             <a href="mailto:{{ $ftEmail }}" dir="ltr" style="text-align:right">{{ $ftEmail }}</a>
           @endif
           @if ($ftPhone)
-            <a href="tel:{{ preg_replace('/[^\d+]/', '', $ftPhone) }}" dir="ltr" style="text-align:right">{{ $ftPhone }}</a>
+            <a href="{{ \App\Support\FluentContact::phoneHref() }}" dir="ltr" style="text-align:right">{{ $ftPhone }}</a>
           @endif
         </div>
       </div>

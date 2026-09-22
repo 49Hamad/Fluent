@@ -8,8 +8,7 @@
       - No localStorage data layer (FluentStore) is loaded.
 --}}
 @php
-    $cfgSetting = \App\Models\Setting::first();
-    $cfgEmail = collect($cfgSetting?->Address ?? [])->firstWhere('social_type', 'email')['name'] ?? 'fluent@fluent.sa';
+    $cfgEmail = \App\Support\FluentContact::email();
 @endphp
 <script>
 window.FLUENT_CONFIG = {
