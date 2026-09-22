@@ -8,10 +8,10 @@
     strip the client-side "in" class.
 --}}
 @php
-    $address  = collect($Setting?->Address ?? []);
-    $cEmail   = $address->firstWhere('social_type', 'email')['name'] ?? null;
-    $cPhone   = $address->firstWhere('social_type', 'phone')['name'] ?? null;
-    $cPlace   = $address->firstWhere('social_type', 'address')['name'] ?? null;
+    // Public contact details — managed in Filament (see App\Support\FluentContact)
+    $cEmail   = \App\Support\FluentContact::email();
+    $cPhone   = \App\Support\FluentContact::phone();
+    $cPlace   = \App\Support\FluentContact::address();
     $errIcon  = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg>';
 @endphp
 <section class="sec contact" id="contact-form" aria-labelledby="contact-h">
@@ -99,7 +99,7 @@
               @if ($cPhone)
                 <div class="cinfo-row">
                   <span class="cinfo-k">الهاتف</span>
-                  <a class="cinfo-v num" href="tel:{{ preg_replace('/[^\d+]/', '', $cPhone) }}" dir="ltr" style="text-align:right">{{ $cPhone }}</a>
+                  <a class="cinfo-v num" href="{{ \App\Support\FluentContact::phoneHref() }}" dir="ltr" style="text-align:right">{{ $cPhone }}</a>
                 </div>
               @endif
               @if ($cPlace)
