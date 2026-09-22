@@ -14,7 +14,6 @@
     @include('livewire.home-page.redesign.sections.proof')          {{-- [DB] NumberTalk --}}
     @include('livewire.home-page.redesign.sections.achievements')   {{-- [DB] Achievement --}}
     @include('livewire.home-page.redesign.sections.partners')       {{-- [DB] Client + OurPartner --}}
-    @include('livewire.home-page.redesign.sections.testimonials')   {{-- [DB] FormEvaluation --}}
     @include('livewire.home-page.redesign.sections.why')
     @include('livewire.home-page.redesign.sections.audience')
     @include('livewire.home-page.redesign.sections.cta')
