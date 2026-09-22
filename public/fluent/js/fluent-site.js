@@ -1,8 +1,6 @@
 /* ============================================================
    FLUENT — Public site script (redesign)
    Copied verbatim from the approved prototype (index.html <script>).
-   Only change: '.miles' (Laravel achievements timeline) is added to the
-   scroll-reveal selector so it uses the exact same reveal behaviour.
    ============================================================ */
 (function(){
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -16,7 +14,7 @@
   onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
 
   /* scroll reveals */
-  var items=document.querySelectorAll('.reveal, .bridge, .miles');
+  var items=document.querySelectorAll('.reveal, .bridge');
   if(!('IntersectionObserver' in window) || reduce){
     items.forEach(function(el){ el.classList.add('in'); });
   } else {
