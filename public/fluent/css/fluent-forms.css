@@ -1,0 +1,390 @@
+/* ============================================================
+   FLUENT — طبقة النماذج (Forms layer)
+   ------------------------------------------------------------
+   طبقة جديدة فقط. لا تعدّل أي قاعدة من قواعد الموقع الحالي،
+   وتبني على نفس المتغيّرات في :root (--ink / --paper / --signal …).
+
+   ملاحظة عن اللون: الهوية ثلاثة ألوان فقط. أُضيف هنا لون وظيفي
+   واحد لحالة الخطأ (--danger) لأن الأصفر مخصّص للإجراء الأساسي
+   ولا يصحّ استخدامه للتحذير. لا يظهر هذا اللون إلا داخل رسائل
+   الخطأ وحدود الحقل غير الصالح.
+   ============================================================ */
+
+[hidden]{display:none!important}
+
+:root{
+  --danger:#ff6b60;
+  --danger-soft:rgba(255,107,96,.12);
+  --field-radius:10px;
+}
+
+/* ============================================================
+   01 — رأس الصفحة (Form hero)
+   ============================================================ */
+.fhead{
+  position:relative;overflow:hidden;
+  padding-block:calc(78px + clamp(48px,7vw,86px)) clamp(38px,5vw,60px);
+  border-bottom:1px solid var(--line);
+}
+.fhead-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
+.fhead-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(to left,var(--line) 1px,transparent 1px),linear-gradient(to bottom,var(--line) 1px,transparent 1px);
+  background-size:clamp(56px,7vw,92px) clamp(56px,7vw,92px);
+  opacity:.42;
+  -webkit-mask-image:radial-gradient(110% 100% at 88% 0%,#000 0%,rgba(0,0,0,.3) 48%,transparent 80%);
+  mask-image:radial-gradient(110% 100% at 88% 0%,#000 0%,rgba(0,0,0,.3) 48%,transparent 80%);
+}
+.fhead-ghost{position:absolute;top:-28%;inset-inline-end:-12%;width:min(48vw,560px);color:var(--paper);opacity:.045}
+.fhead-ghost svg{width:100%;height:auto;fill:currentColor}
+.fhead-veil{position:absolute;inset:0;background:
+  radial-gradient(80% 80% at 86% 6%,rgba(247,200,0,.05),transparent 62%),
+  linear-gradient(to top,rgba(15,15,15,.9) 0%,rgba(15,15,15,0) 42%);}
+.fhead-in{position:relative;z-index:2}
+.fhead h1{margin-block:1.2rem 1.2rem;max-width:14ch}
+.fhead .lead{max-width:56ch}
+
+.backlink{
+  display:inline-flex;align-items:center;gap:.5rem;font-size:.86rem;color:var(--muted);
+  margin-bottom:1.6rem;transition:color .3s;
+}
+.backlink svg{width:.95rem;height:.95rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s var(--ease)}
+.backlink:hover{color:var(--paper)}
+.backlink:hover svg{transform:translateX(-4px)}
+
+/* شارة حالة التسجيل */
+.fstatus{
+  display:inline-flex;align-items:center;gap:.6rem;margin-top:1.9rem;
+  padding:.55rem 1.1rem;border-radius:100px;font-size:.85rem;font-weight:500;
+  border:1px solid rgba(247,200,0,.35);background:rgba(247,200,0,.06);color:var(--signal);
+}
+.fstatus i{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none;position:relative}
+.fstatus.is-open i::after{
+  content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid currentColor;
+  opacity:.5;animation:pulse 2.4s ease-out infinite;
+}
+@keyframes pulse{0%{transform:scale(.7);opacity:.6}100%{transform:scale(1.5);opacity:0}}
+.fstatus.is-closed{border-color:var(--line-strong);background:rgba(244,244,244,.03);color:var(--muted)}
+.fstatus.is-waitlist{border-color:rgba(244,244,244,.28);background:rgba(244,244,244,.04);color:var(--paper)}
+
+/* ============================================================
+   02 — تخطيط الصفحة
+   ============================================================ */
+.fbody{padding-block:clamp(48px,7vw,92px) clamp(64px,9vw,120px)}
+.flayout{display:grid;grid-template-columns:1.28fr .72fr;gap:clamp(2rem,4vw,3.6rem);align-items:start}
+@media(max-width:980px){.flayout{grid-template-columns:1fr;gap:2.4rem}}
+
+/* بطاقة النموذج — نفس لغة .step في الصفحة الرئيسية */
+.fcard{
+  border:1px solid var(--line);border-radius:var(--radius);
+  background:linear-gradient(180deg,rgba(244,244,244,.028),rgba(244,244,244,0));
+  padding:clamp(1.5rem,3vw,2.6rem);
+  position:relative;
+}
+
+/* العمود الجانبي */
+.faside{position:sticky;top:104px;display:flex;flex-direction:column;gap:1.1rem}
+@media(max-width:980px){.faside{position:static}}
+.fnote{
+  border:1px solid var(--line);border-radius:var(--radius);
+  background:rgba(244,244,244,.02);padding:clamp(1.3rem,2.2vw,1.7rem);
+}
+.fnote-h{font-size:.74rem;letter-spacing:.14em;color:var(--muted-2);text-transform:uppercase;margin-bottom:1.1rem}
+.fnote ol{display:flex;flex-direction:column;gap:1.05rem;counter-reset:fn}
+.fnote ol > li{position:relative;padding-inline-start:2.2rem;font-size:.92rem;color:var(--muted);line-height:1.7}
+.fnote ol > li::before{
+  counter-increment:fn;content:counter(fn,decimal-leading-zero);
+  position:absolute;inset-inline-start:0;top:.12rem;
+  font-size:.74rem;color:var(--muted-2);font-variant-numeric:tabular-nums;
+}
+.fnote ol > li b{display:block;color:var(--paper);font-weight:500;font-size:.95rem;margin-bottom:.1rem}
+.fnote p{font-size:.92rem;color:var(--muted);line-height:1.75}
+.fnote a{color:var(--signal)}
+
+/* ============================================================
+   03 — المؤشّر متعدّد الخطوات
+   ============================================================ */
+.fsteps{display:flex;gap:.7rem;margin-bottom:clamp(1.8rem,3vw,2.4rem)}
+.fstep{
+  flex:1;border-top:2px solid var(--line-strong);padding-top:.75rem;
+  font-size:.78rem;color:var(--muted-2);line-height:1.5;
+  transition:border-color .5s var(--ease),color .5s;
+}
+.fstep b{display:block;font-weight:500;font-size:.72rem;letter-spacing:.1em;margin-bottom:.15rem}
+.fstep.is-done{border-top-color:rgba(247,200,0,.42);color:var(--muted)}
+.fstep.is-on{border-top-color:var(--signal);color:var(--paper)}
+@media(max-width:560px){.fstep{font-size:.72rem}.fstep b{font-size:.66rem}}
+
+/* ============================================================
+   04 — الحقول
+   ============================================================ */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:1.35rem clamp(1rem,2vw,1.6rem)}
+@media(max-width:640px){.fgrid{grid-template-columns:1fr}}
+.ffield{display:flex;flex-direction:column;gap:.55rem;min-width:0}
+.ffield.w-full{grid-column:1 / -1}
+
+.flabel{font-size:.9rem;font-weight:500;color:var(--paper);line-height:1.5}
+.flabel .req{color:var(--signal);margin-inline-start:.15rem}
+.flabel .opt{color:var(--muted-2);font-weight:300;font-size:.82rem;margin-inline-start:.35rem}
+.fhelp{font-size:.82rem;color:var(--muted-2);line-height:1.65}
+
+.fctrl{
+  width:100%;font:inherit;font-size:.95rem;font-weight:300;line-height:1.6;
+  color:var(--paper);background:rgba(244,244,244,.03);
+  border:1px solid var(--line-strong);border-radius:var(--field-radius);
+  padding:.92rem 1.05rem;
+  transition:border-color .3s,background .3s,box-shadow .3s;
+  -webkit-appearance:none;appearance:none;
+}
+.fctrl::placeholder{color:#5d5d5c}
+.fctrl:hover{border-color:rgba(244,244,244,.3)}
+.fctrl:focus{
+  outline:none;border-color:var(--signal);background:rgba(244,244,244,.05);
+  box-shadow:0 0 0 3px rgba(247,200,0,.14);
+}
+textarea.fctrl{min-height:150px;resize:vertical;line-height:1.8}
+.fctrl[type=date],.fctrl[type=number]{text-align:start}
+
+/* عدّاد الأحرف */
+.fcount{font-size:.76rem;color:var(--muted-2);text-align:start;font-variant-numeric:tabular-nums}
+.fcount.is-near{color:var(--signal)}
+
+/* القائمة المنسدلة */
+select.fctrl{
+  padding-inline-start:2.6rem;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239a9a99' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:left 1.05rem center;background-size:1rem;
+}
+select.fctrl option{background:var(--surface-2);color:var(--paper)}
+
+/* الاختيارات (radio / checkbox) */
+.fopts{display:flex;flex-direction:column;gap:.6rem;border:0;padding:0;margin:0;min-width:0}
+.fopts.is-inline{flex-direction:row;flex-wrap:wrap}
+.fopt{
+  display:flex;align-items:flex-start;gap:.75rem;cursor:pointer;
+  border:1px solid var(--line);border-radius:var(--field-radius);
+  background:rgba(244,244,244,.02);padding:.85rem 1rem;
+  font-size:.93rem;color:#cbcbca;line-height:1.6;
+  transition:border-color .3s,background .3s,color .3s;
+}
+.fopts.is-inline .fopt{flex:1 1 auto}
+.fopt:hover{border-color:var(--line-strong);color:var(--paper)}
+.fopt input{position:absolute;opacity:0;width:0;height:0}
+.fbox{
+  width:1.15rem;height:1.15rem;flex:none;margin-top:.22rem;
+  border:1px solid var(--line-strong);background:transparent;
+  display:grid;place-items:center;
+  transition:border-color .25s,background .25s;
+}
+.fbox.is-radio{border-radius:50%}
+.fbox.is-check{border-radius:5px}
+.fbox::after{
+  content:"";width:.5rem;height:.5rem;border-radius:50%;background:var(--ink);
+  transform:scale(0);transition:transform .25s var(--ease);
+}
+.fbox.is-check::after{
+  width:.62rem;height:.62rem;border-radius:0;background:none;
+  border-inline-start:2px solid var(--ink);border-bottom:2px solid var(--ink);
+  transform:rotate(-45deg) scale(0);margin-bottom:.16rem;
+}
+.fopt input:checked ~ .fbox{background:var(--signal);border-color:var(--signal)}
+.fopt input:checked ~ .fbox::after{transform:scale(1)}
+.fopt input:checked ~ .fbox.is-check::after{transform:rotate(-45deg) scale(1)}
+.fopt:has(input:checked){border-color:rgba(247,200,0,.45);background:rgba(247,200,0,.05);color:var(--paper)}
+.fopt input:focus-visible ~ .fbox{outline:2px solid var(--signal);outline-offset:3px}
+
+/* موافقة مفردة */
+.fconsent{grid-column:1 / -1}
+.fconsent .fopt{align-items:flex-start}
+.fconsent a{color:var(--signal)}
+
+/* ============================================================
+   04b — رفع الملفات
+   يستخدم نفس لغة الحقول: الحدود، الزوايا، هالة التركيز الصفراء.
+   ============================================================ */
+.fdrop{
+  position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:.5rem;text-align:center;cursor:pointer;
+  min-height:132px;padding:1.4rem 1.2rem;
+  border:1px dashed var(--line-strong);border-radius:var(--field-radius);
+  background:rgba(244,244,244,.025);
+  transition:border-color .3s,background .3s,box-shadow .3s;
+}
+.fdrop:hover{border-color:rgba(244,244,244,.34);background:rgba(244,244,244,.04)}
+.fdrop:focus-visible{
+  outline:none;border-color:var(--signal);border-style:solid;
+  background:rgba(244,244,244,.05);box-shadow:0 0 0 3px rgba(247,200,0,.14);
+}
+.fdrop.is-over{
+  border-color:var(--signal);border-style:solid;background:rgba(247,200,0,.06);
+  box-shadow:0 0 0 3px rgba(247,200,0,.14);
+}
+.fdrop-input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+.fdrop-ico{width:1.6rem;height:1.6rem;color:var(--signal);opacity:.85}
+.fdrop-ico svg{width:100%;height:100%;display:block}
+.fdrop.is-over .fdrop-ico,.fdrop:hover .fdrop-ico{opacity:1}
+.fdrop-t{font-size:.94rem;color:#cbcbca;line-height:1.6}
+.fdrop-t b{color:var(--paper);font-weight:500;border-bottom:1px solid rgba(247,200,0,.5);padding-bottom:1px}
+.fdrop-s{font-size:.78rem;color:var(--muted-2);font-variant-numeric:tabular-nums}
+
+/* الملف المختار */
+.ffile{
+  display:flex;align-items:center;gap:.85rem;
+  padding:.9rem 1rem;border:1px solid rgba(247,200,0,.4);border-radius:var(--field-radius);
+  background:rgba(247,200,0,.05);
+  animation:fileIn .4s var(--ease) both;
+}
+@keyframes fileIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ffile-ico{width:1.35rem;height:1.35rem;flex:none;color:var(--signal)}
+.ffile-ico svg{width:100%;height:100%;display:block}
+.ffile-meta{display:flex;flex-direction:column;gap:.1rem;min-width:0;flex:1 1 auto}
+.ffile-n{
+  font-size:.92rem;font-weight:500;color:var(--paper);line-height:1.45;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:right;
+}
+.ffile-s{font-size:.78rem;color:var(--muted-2);font-variant-numeric:tabular-nums}
+.ffile-acts{display:flex;align-items:center;gap:.35rem;flex:none}
+.ffile-b{
+  font-family:inherit;font-size:.82rem;color:#cbcbca;background:none;cursor:pointer;
+  border:1px solid var(--line-strong);border-radius:100px;padding:.4rem .85rem;
+  transition:border-color .3s,color .3s;
+}
+.ffile-b:hover{border-color:var(--paper);color:var(--paper)}
+.ffile-x{
+  display:grid;place-items:center;width:1.9rem;height:1.9rem;flex:none;cursor:pointer;
+  border:1px solid var(--line-strong);border-radius:50%;background:none;color:var(--muted);
+  transition:border-color .3s,color .3s;
+}
+.ffile-x svg{width:.8rem;height:.8rem}
+.ffile-x:hover{border-color:var(--danger);color:var(--danger)}
+.ffield.is-err .fdrop{border-color:var(--danger);box-shadow:0 0 0 3px var(--danger-soft)}
+@media(max-width:480px){
+  .ffile{flex-wrap:wrap}
+  .ffile-acts{width:100%;justify-content:flex-end}
+  .fdrop{min-height:120px}
+}
+
+/* ============================================================
+   05 — حالة الخطأ
+   ============================================================ */
+.ffield.is-err .fctrl,
+.ffield.is-err .fopt{border-color:var(--danger)}
+.ffield.is-err .fctrl{box-shadow:0 0 0 3px var(--danger-soft)}
+.ffield.is-err .fctrl:focus{border-color:var(--danger);box-shadow:0 0 0 3px var(--danger-soft)}
+.ferr{
+  display:none;align-items:flex-start;gap:.45rem;
+  font-size:.83rem;color:var(--danger);line-height:1.6;
+}
+.ffield.is-err .ferr{display:flex}
+.ferr svg{width:.95rem;height:.95rem;flex:none;margin-top:.28rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+
+/* مصيدة السبام — مخفية عن الجميع */
+.fhp{position:absolute!important;inset-inline-start:-9999px;width:1px;height:1px;overflow:hidden}
+
+/* ============================================================
+   06 — أسفل النموذج والأزرار
+   ============================================================ */
+.factions{
+  display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;
+  margin-top:clamp(1.8rem,3vw,2.4rem);padding-top:clamp(1.5rem,2.5vw,2rem);
+  border-top:1px solid var(--line);
+}
+.factions .btn{flex:none}
+.factions .spacer{flex:1 1 auto}
+.fmeta{font-size:.82rem;color:var(--muted-2);line-height:1.6}
+@media(max-width:560px){
+  .factions{flex-direction:column-reverse;align-items:stretch}
+  .factions .btn{width:100%}
+  .fmeta{text-align:center;order:-1}
+}
+
+/* حالة التحميل */
+.btn[data-loading="1"]{pointer-events:none;opacity:.72}
+.btn[data-loading="1"] .btn-label{opacity:.65}
+.spin{
+  width:1rem;height:1rem;flex:none;border-radius:50%;
+  border:2px solid rgba(15,15,15,.28);border-top-color:var(--ink);
+  animation:spin .7s linear infinite;display:none;
+}
+.btn-ghost .spin,.btn-outline .spin{border-color:rgba(244,244,244,.28);border-top-color:var(--paper)}
+.btn[data-loading="1"] .spin{display:block}
+.btn[data-loading="1"] svg:not(.spin){display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.btn-outline{border-color:var(--line-strong);color:var(--paper);background:transparent}
+.btn-outline:hover{border-color:var(--paper);transform:translateY(-2px)}
+
+/* ============================================================
+   07 — التنبيهات والنتائج
+   ============================================================ */
+.falert{
+  display:flex;gap:.85rem;align-items:flex-start;
+  border:1px solid var(--danger);background:var(--danger-soft);
+  border-radius:var(--field-radius);padding:1rem 1.15rem;
+  font-size:.92rem;color:#ffd9d5;line-height:1.7;margin-bottom:1.6rem;
+}
+.falert svg{width:1.15rem;height:1.15rem;flex:none;margin-top:.3rem;stroke:var(--danger);fill:none;stroke-width:2;stroke-linecap:round}
+.falert b{display:block;color:var(--paper);font-weight:500;margin-bottom:.15rem}
+.falert a{color:var(--signal)}
+
+/* لوحة النجاح */
+.fdone{text-align:center;display:flex;flex-direction:column;align-items:center;gap:1.15rem;padding-block:clamp(1.5rem,4vw,3rem)}
+.fdone-mark{width:3.6rem;color:var(--signal);animation:markIn .9s var(--ease) both}
+.fdone-mark svg{width:100%;height:auto;fill:currentColor}
+@keyframes markIn{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:none}}
+.fdone h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:700;line-height:1.3}
+.fdone p{color:var(--muted);max-width:46ch;font-size:.98rem;line-height:1.85}
+.fref{
+  display:inline-flex;align-items:center;gap:.7rem;
+  border:1px solid var(--line-strong);border-radius:100px;padding:.6rem 1.2rem;
+  font-size:.88rem;color:var(--muted);
+}
+.fref b{color:var(--signal);font-weight:600;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.fdone-actions{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.7rem}
+@media(max-width:560px){.fdone-actions{flex-direction:column;width:100%}.fdone-actions .btn{width:100%}}
+
+/* بعد الإرسال: نُخفي العمود الجانبي ونركّز على رسالة النجاح */
+body.is-done .faside{display:none}
+body.is-done .flayout{grid-template-columns:1fr;max-width:780px;margin-inline:auto}
+
+/* لوحة التسجيل المغلق */
+.fshut{display:flex;flex-direction:column;gap:1.2rem;align-items:flex-start;padding-block:clamp(.6rem,2vw,1.4rem)}
+.fshut h2{font-size:clamp(1.35rem,2.6vw,1.8rem);font-weight:600;line-height:1.4;max-width:22ch}
+.fshut p{color:var(--muted);max-width:52ch;line-height:1.85}
+.fshut .chips{margin-top:.3rem}
+
+/* منطقة نموذج التنبيه داخل حالة الإغلاق */
+.fslot{display:none}
+.fslot.is-open{
+  display:block;margin-top:clamp(1.8rem,3vw,2.4rem);
+  padding-top:clamp(1.6rem,2.6vw,2.1rem);border-top:1px solid var(--line);
+  animation:slotIn .5s var(--ease) both;
+}
+@keyframes slotIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.fslot .fpreview{margin-bottom:1.3rem}
+.fslot h3:focus{outline:none}
+
+/* حاوية Turnstile (فارغة ما لم يُفعَّل) */
+.fbot{margin-top:1.6rem;min-height:0}
+.fbot:empty{display:none}
+
+/* شريط وضع المعاينة */
+.fpreview{
+  display:flex;gap:.7rem;align-items:flex-start;
+  border:1px dashed rgba(247,200,0,.45);background:rgba(247,200,0,.05);
+  border-radius:var(--field-radius);padding:.9rem 1.1rem;
+  font-size:.86rem;color:var(--signal);line-height:1.7;margin-bottom:1.5rem;
+}
+.fpreview svg{width:1.05rem;height:1.05rem;flex:none;margin-top:.32rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+
+/* ============================================================
+   08 — حركة مخفّضة
+   ============================================================ */
+@media(prefers-reduced-motion:reduce){
+  .fctrl,.fopt,.fbox,.fbox::after,.fstep,.backlink svg{transition:none!important}
+  .fdone-mark{animation:none}
+  .ffile{animation:none}
+  .fslot.is-open{animation:none}
+  .fstatus.is-open i::after{animation:none}
+  .spin{animation-duration:1.4s}
+}
