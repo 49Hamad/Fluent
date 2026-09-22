@@ -1,6 +1,7 @@
 {{--
     Fluent public layout (redesign).
-    Used by the new homepage (ShowHomePage) and the temporary public pages.
+    Used by the new homepage (ShowHomePage) and the new public pages
+    (student application, business challenge, student login, portal preview).
     The old layout (components/layouts/app.blade.php) is untouched and still
     serves /feedback-form/{id}.
 
@@ -12,6 +13,9 @@
     'title' => null,
     'description' => null,
     'noindex' => false,
+    'chrome' => true,      // site header + footer (false for the login / portal app screens)
+    'siteScript' => true,  // homepage motion script; form pages use FluentForm.shell() instead
+    'appCss' => false,     // prototype app layer (login / portal)
 ])
 @php
     $fluentSetting   = \App\Models\Setting::first();
@@ -54,6 +58,9 @@
 <link rel="preload" href="{{ asset('fluent/fonts/alexandria-arabic.woff2') }}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{{ asset('fluent/css/fluent-site.css') }}{{ $v }}">
 <link rel="stylesheet" href="{{ asset('fluent/css/fluent-forms.css') }}{{ $v }}">
+@if ($appCss)
+<link rel="stylesheet" href="{{ asset('fluent/css/fluent-app.css') }}{{ $v }}">
+@endif
 <link rel="stylesheet" href="{{ asset('fluent/css/fluent-laravel.css') }}{{ $v }}">
 
 {{-- Tracking / custom scripts managed in Filament (unchanged behaviour) --}}
@@ -63,9 +70,9 @@
 @stack('head')
 </head>
 <body>
-<a class="skip" href="#main">تجاوز إلى المحتوى</a>
-
 @include('fluent.partials.logo-symbol')
+@if ($chrome)
+<a class="skip" href="#main">تجاوز إلى المحتوى</a>
 @include('fluent.partials.header')
 
 <main id="main">
@@ -73,8 +80,13 @@
 </main>
 
 @include('fluent.partials.footer', ['setting' => $fluentSetting])
+@else
+{{ $slot }}
+@endif
 
+@if ($siteScript)
 <script src="{{ asset('fluent/js/fluent-site.js') }}{{ $v }}" defer></script>
+@endif
 <script type="application/ld+json">
 {!! json_encode(array_filter([
     '@context' => 'https://schema.org',
