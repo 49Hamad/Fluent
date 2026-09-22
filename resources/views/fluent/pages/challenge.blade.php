@@ -9,7 +9,7 @@
     and stores NOTHING. The Laravel submission backend is a later phase.
 --}}
 @php
-    $contactEmail = collect(\App\Models\Setting::first()?->Address ?? [])->firstWhere('social_type', 'email')['name'] ?? 'fluent@fluent.sa';
+    $contactEmail = \App\Support\FluentContact::email();   // managed in Filament
 @endphp
 <x-layouts.fluent :title="'شاركنا تحديًا — Fluent'" description="شارك تحديًا أو مشروعًا حقيقيًا من جهتك ليعمل عليه المشاركون في محاكاة Fluent المهنية، وتستلم مخرجات مفيدة." :noindex="true" :site-script="false">
 <!-- ==================== رأس الصفحة ==================== -->
