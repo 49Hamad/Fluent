@@ -906,13 +906,13 @@
             console.error('[Fluent] الإرسال غير مفعّل: لم تُضبط بيانات Supabase في assets/js/fluent-config.js، و previewMode = false.');
             showAlert('التسجيل غير متاح حاليًا.',
               ' نعمل على المشكلة. راسلنا في هذه الأثناء على ' +
-              '<a href="mailto:' + esc(CFG.contactEmail || 'info@fluent.com') + '" dir="ltr">' +
-              esc(CFG.contactEmail || 'info@fluent.com') + '</a>.', false);
+              '<a href="mailto:' + esc(CFG.contactEmail || 'info@fluent.sa') + '" dir="ltr">' +
+              esc(CFG.contactEmail || 'info@fluent.sa') + '</a>.', false);
           } else {
             showAlert('ما وصل الطلب.',
               ' تحقّق من الاتصال وأعد المحاولة. إذا تكرّرت المشكلة راسلنا على ' +
-              '<a href="mailto:' + esc(CFG.contactEmail || 'info@fluent.com') + '" dir="ltr">' +
-              esc(CFG.contactEmail || 'info@fluent.com') + '</a>.', true);
+              '<a href="mailto:' + esc(CFG.contactEmail || 'info@fluent.sa') + '" dir="ltr">' +
+              esc(CFG.contactEmail || 'info@fluent.sa') + '</a>.', true);
           }
         });
     });
@@ -989,7 +989,7 @@
         });
       } else {
         var mail = el('a', 'btn btn-primary');
-        mail.href = 'mailto:' + (CFG.contactEmail || 'info@fluent.com') +
+        mail.href = 'mailto:' + (CFG.contactEmail || 'info@fluent.sa') +
           '?subject=' + encodeURIComponent('إشعار فتح التسجيل — Fluent');
         mail.innerHTML = 'راسلنا' + ICON.arrow;
         shut.appendChild(mail);

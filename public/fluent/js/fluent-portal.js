@@ -202,9 +202,9 @@
         '<aside class="card">' +
           '<div class="card-h"><h2>تحتاج مساعدة؟</h2></div>' +
           '<p class="tiny muted" style="line-height:1.85">أي سؤال عن طلبك أو عن التجربة، راسلنا وسنرد عليك.</p>' +
-          '<p style="margin-top:1rem"><a href="mailto:' + esc((window.FLUENT_CONFIG || {}).contactEmail || 'info@fluent.com') +
+          '<p style="margin-top:1rem"><a href="mailto:' + esc((window.FLUENT_CONFIG || {}).contactEmail || 'info@fluent.sa') +
             '" dir="ltr" style="color:var(--signal);font-size:.9rem">' +
-            esc((window.FLUENT_CONFIG || {}).contactEmail || 'info@fluent.com') + '</a></p>' +
+            esc((window.FLUENT_CONFIG || {}).contactEmail || 'info@fluent.sa') + '</a></p>' +
           '<p style="margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid var(--line)">' +
             '<a href="/" class="tiny muted" style="display:inline-flex;align-items:center;gap:.4rem">العودة إلى موقع Fluent</a></p>' +
         '</aside>' +
