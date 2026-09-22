@@ -51,7 +51,7 @@
         <div class="ft-links">
           <a href="{{ route('fluent.apply') }}">سجّل في المحاكاة</a>
           <a href="{{ route('fluent.challenge') }}">شاركنا تحديًا</a>
-          <a href="{{ route('fluent.portal') }}">مساحتي في Fluent</a>
+          <a href="{{ route('fluent.login') }}">مساحتي في Fluent</a>
           <a href="{{ $home }}#contact-form">راسلنا</a>
           @if ($ftEmail)
             <a href="mailto:{{ $ftEmail }}" dir="ltr" style="text-align:right">{{ $ftEmail }}</a>
