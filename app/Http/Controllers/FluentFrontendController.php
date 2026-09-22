@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Setting;
+use App\Support\FluentContact;
 use Illuminate\Http\Request;
 
 /**
@@ -57,7 +57,7 @@ class FluentFrontendController extends Controller
         return response()
             ->view('fluent.pages.portal-preview', [
                 'state'        => $state,
-                'contactEmail' => $this->contactEmail(),
+                'contactEmail' => FluentContact::email(),
             ])
             ->header('X-Robots-Tag', 'noindex, nofollow');
     }
@@ -67,11 +67,5 @@ class FluentFrontendController extends Controller
         abort_unless(config('fluent.frontend_preview'), 404);
 
         return view($view);
-    }
-
-    private function contactEmail(): string
-    {
-        return collect(Setting::first()?->Address ?? [])
-            ->firstWhere('social_type', 'email')['name'] ?? 'fluent@fluent.sa';
     }
 }
