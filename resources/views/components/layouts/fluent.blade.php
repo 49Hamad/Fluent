@@ -26,7 +26,8 @@
     $metaKeywords    = is_array($fluentSetting?->meta_keywords) ? implode('، ', $fluentSetting->meta_keywords) : null;
     $metaImage       = $fluentSetting?->meta_image ? asset('storage/' . $fluentSetting->meta_image) : null;
 
-    $fluentEmail = collect($fluentSetting?->Address ?? [])->firstWhere('social_type', 'email')['name'] ?? null;
+    $fluentEmail = \App\Support\FluentContact::email();   // public contact, managed in Filament
+    $fluentPhone = \App\Support\FluentContact::phone();
     $v = '?v=' . (@filemtime(public_path('fluent/css/fluent-laravel.css')) ?: '1');
 @endphp
 <!DOCTYPE html>
@@ -96,6 +97,7 @@
     'url' => url('/'),
     'description' => 'منصة للمحاكاة المهنية والتجارب العملية، تضع الطلاب والخريجين في بيئات تحاكي واقع العمل.',
     'email' => $fluentEmail,
+    'telephone' => $fluentPhone,
     'areaServed' => 'SA',
 ]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
 </script>
