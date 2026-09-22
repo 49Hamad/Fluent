@@ -20,4 +20,17 @@ return [
     */
     'frontend_preview' => (bool) env('FLUENT_FRONTEND_PREVIEW', env('APP_ENV', 'production') !== 'production'),
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Public contact details — FALLBACK ONLY
+    |--------------------------------------------------------------------------
+    | The real values are edited in Filament → الإعدادات العامة → روابط التواصل
+    | الاجتماعي (Email / Phone rows). These are used only if those are empty.
+    */
+    'contact' => [
+        'email' => 'info@fluent.sa',
+        'phone' => '+966547291315',
+    ],
+
 ];
