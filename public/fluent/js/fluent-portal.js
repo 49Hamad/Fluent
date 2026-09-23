@@ -6,6 +6,9 @@
      - text is HTML-escaped before display (the prototype did not escape;
        required now that the data is real)
      - several applications (future): a small switcher; one → opens directly
+     - seat-confirmation steps for «مقبول مبدئيًا»: agreement → optional media
+       consent → bank transfer → receipt upload → verification → seat
+       (all rules are enforced on the server; this file only displays them)
    ------------------------------------------------------------
    FLUENT — بوابة الطالب «مساحتي في Fluent»
    ------------------------------------------------------------
@@ -119,9 +122,8 @@
         'تفاصيل التجربة في الأعلى. نراك قريبًا.</div>';
     }
     if (status === 'preliminary_accepted') {
-      /* Later: agreement / payment / seat confirmation will appear here. */
       return '<div class="outcome t-good"><b>مقبول مبدئيًا</b>' +
-        'يسعدنا إبلاغك بقبولك مبدئيًا في تجربة Fluent. سنتواصل معك على بريدك بالخطوة التالية قبل تأكيد مقعدك.</div>';
+        'يسعدنا إبلاغك بقبولك مبدئيًا في تجربة Fluent. أكمل «خطوات تأكيد مقعدك» في الأعلى — مقعدك يتأكد بعد التحقق من السداد.</div>';
     }
     if (status === 'waitlist') {
       return '<div class="outcome t-hold"><b>على قائمة الانتظار</b>' +
@@ -202,6 +204,244 @@
     return html + '</section>';
   }
 
+
+  /* ============================================================
+     خطوات تأكيد المقعد (بعد القبول المبدئي)
+     ============================================================ */
+  var ENR_ICON = {
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7"/></svg>',
+    lock:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+    info:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4.5M12 16h.01"/></svg>'
+  };
+
+  /* ما المطلوب من الطالب الآن — جملة واحدة واضحة */
+  function nextStep(e, final) {
+    var p = e.payment;
+    if (final || e.seat.confirmed) return ['good', 'مقعدك مؤكد', 'اكتملت كل الخطوات. تفاصيل دفعتك في الأعلى.'];
+    if (!e.ready && !e.agreement.accepted) return ['neutral', 'نجهّز لك الخطوة التالية', 'الاتفاقية وتفاصيل الرسوم لدفعتك قيد الإعداد. سنبلغك على بريدك فور جاهزيتها.'];
+    if (!e.agreement.accepted) return ['signal', 'المطلوب منك الآن: اقرأ الاتفاقية ووافق عليها', 'بعد الموافقة تظهر لك تفاصيل التحويل البنكي والمبلغ المطلوب.'];
+    if (p.status === 'reupload_requested') return ['hold', 'المطلوب منك الآن: ارفع إيصالًا جديدًا', 'راجع الملاحظة في خطوة رفع الإيصال.'];
+    if (p.status === 'awaiting_transfer') return ['signal', 'المطلوب منك الآن: حوّل الرسوم ثم ارفع الإيصال', 'تفاصيل الحساب والمبلغ في الخطوة ٤.'];
+    if (p.status === 'verified') return ['good', 'تم التحقق من السداد', 'بقي تأكيد مقعدك من فريق Fluent. سيصلك بريد عند التأكيد.'];
+    return ['neutral', 'لا شيء مطلوب منك الآن', 'وصلنا إيصالك ونتحقق من التحويل. سنحدّث حالتك هنا.'];
+  }
+
+  function stepHtml(n, state, title, body) {
+    /* state: done | on | locked | wait */
+    var mark = state === 'done' ? ENR_ICON.check : (state === 'locked' ? ENR_ICON.lock : String(n));
+    return '<li class="estep is-' + state + '"><span class="estep-n" aria-hidden="true">' + mark + '</span>' +
+      '<div class="estep-b"><h3>' + esc(title) + '</h3>' + body + '</div></li>';
+  }
+
+  function enrollmentSection(e, final) {
+    var a = e.agreement, p = e.payment, m = e.media, seat = e.seat;
+    var ns = nextStep(e, final);
+    var html = '<section class="card enroll" id="enroll">' +
+      '<div class="card-h"><h2>خطوات تأكيد مقعدك</h2><span class="sp"></span>' +
+        '<span class="pill t-' + (seat.confirmed || final ? 'good' : 'signal') + '">' + (seat.confirmed || final ? 'مقعدك مؤكد' : 'بانتظار إكمال الخطوات') + '</span></div>' +
+      '<div class="enext t-' + ns[0] + '"><b>' + esc(ns[1]) + '</b><span>' + esc(ns[2]) + '</span></div>' +
+      '<ol class="esteps">';
+
+    /* 1 — القبول المبدئي */
+    html += stepHtml(1, 'done', 'القبول المبدئي', '<p>تم قبولك مبدئيًا في الدفعة.</p>');
+
+    /* 2 — الاتفاقية */
+    var agBody;
+    if (a.accepted) {
+      agBody = '<p>وافقت على «' + esc(a.title) + '» (النسخة ' + esc(a.version) + ') في ' + esc(a.accepted_at) + '.</p>' +
+        '<p><button type="button" class="elink" data-go="agreement">عرض الاتفاقية التي وافقت عليها</button></p>';
+    } else if (!e.ready) {
+      agBody = '<p class="muted">الاتفاقية قيد الإعداد لدفعتك.</p>';
+    } else {
+      agBody = '<p>اقرأ اتفاقية المشاركة كاملة، وفيها بيانات الدفعة والرسوم وسياسة الانسحاب والاسترداد.</p>' +
+        '<p><button type="button" class="btn btn-primary btn-sm" data-go="agreement">اقرأ الاتفاقية ووافق عليها' + ICON.arrow + '</button></p>';
+    }
+    html += stepHtml(2, a.accepted ? 'done' : (e.ready ? 'on' : 'wait'), 'اتفاقية المشاركة', agBody);
+
+    /* 3 — الموافقة الإعلامية (اختيارية ومنفصلة) */
+    var cur = m.decided ? (m.granted ? 'yes' : 'no') : '';
+    var mBody = '<p class="tiny muted">اختيارية ولا تؤثر على قبولك أو مقعدك، وتقدر تغيّرها لاحقًا.</p>' +
+      '<form class="emedia" novalidate><p class="emedia-t">' + esc(m.text) + '</p>' +
+      '<div class="fopts is-inline">' +
+        '<label class="fopt"><input type="radio" name="granted" value="yes"' + (cur === 'yes' ? ' checked' : '') + '><span class="fbox is-radio" aria-hidden="true"></span><span>أوافق</span></label>' +
+        '<label class="fopt"><input type="radio" name="granted" value="no"' + (cur === 'no' ? ' checked' : '') + '><span class="fbox is-radio" aria-hidden="true"></span><span>لا أوافق</span></label>' +
+      '</div>' +
+      '<div class="erow"><button type="submit" class="btn btn-outline btn-sm">حفظ اختياري</button>' +
+      (m.decided ? '<span class="tiny muted">اختيارك الحالي: ' + (m.granted ? 'موافق' : 'غير موافق') + ' · ' + esc(m.decided_at) + '</span>' : '<span class="tiny muted">لم تختر بعد.</span>') +
+      '</div><div class="emsg" role="status"></div></form>';
+    html += stepHtml(3, m.decided ? 'done' : 'on', 'الموافقة على التصوير والنشر (اختيارية)', mBody);
+
+    /* 4 — التحويل البنكي */
+    var bBody;
+    if (!a.accepted) {
+      bBody = '<p class="muted">تظهر تفاصيل التحويل والمبلغ المطلوب بعد الموافقة على الاتفاقية.</p>';
+    } else if (p.bank) {
+      var b = p.bank;
+      bBody = '<div class="eamount"><span>المبلغ المطلوب</span><b>' + esc(p.amount || '—') + '</b></div>' +
+        '<dl class="dl ebank">' +
+          (b.bank_name ? '<div><dt>البنك</dt><dd>' + esc(b.bank_name) + '</dd></div>' : '') +
+          (b.beneficiary_name ? '<div><dt>اسم المستفيد</dt><dd>' + esc(b.beneficiary_name) + '</dd></div>' : '') +
+          (b.iban ? '<div><dt>رقم الآيبان (IBAN)</dt><dd class="ltr">' + esc(b.iban) + '</dd></div>' : '') +
+          (b.account_number ? '<div><dt>رقم الحساب</dt><dd class="ltr">' + esc(b.account_number) + '</dd></div>' : '') +
+          (p.deadline ? '<div><dt>آخر موعد للسداد</dt><dd>' + esc(p.deadline) + '</dd></div>' : '') +
+          '<div><dt>مرجع التحويل</dt><dd class="ltr">' + esc(app.reference) + '</dd></div>' +
+        '</dl>' +
+        (b.instructions ? '<p class="einstr">' + esc(b.instructions) + '</p>' : '') +
+        '<p class="tiny muted">التحويل يتم من تطبيق أو موقع بنكك مباشرة. Fluent لا تطلب منك بيانات بطاقتك أو حسابك.</p>';
+    } else {
+      bBody = '<p class="muted">تفاصيل التحويل ستظهر هنا قريبًا.</p>';
+    }
+    var paid = ['receipt_uploaded', 'under_review', 'verified'].indexOf(p.status) > -1;
+    html += stepHtml(4, !a.accepted ? 'locked' : (paid ? 'done' : 'on'), 'التحويل البنكي', bBody);
+
+    /* 5 — رفع الإيصال */
+    var rBody = '';
+    if (!a.accepted) {
+      rBody = '<p class="muted">بعد التحويل ترفع إيصال التحويل هنا.</p>';
+    } else {
+      rBody += '<p>حالة السداد: <span class="pill t-' + payTone(p.status) + '">' + esc(p.label) + '</span></p>';
+      if (p.reupload_reason) {
+        rBody += '<div class="falert" role="alert">' + ENR_ICON.info + '<span><b>نحتاج إيصالًا جديدًا.</b> ' + esc(p.reupload_reason) + '</span></div>';
+      }
+      if (p.can_upload) {
+        rBody += '<form class="ereceipt" novalidate>' +
+          '<label class="flabel" for="e-receipt">ملف الإيصال</label>' +
+          '<input class="fctrl" id="e-receipt" name="receipt" type="file" accept="application/pdf,image/jpeg,image/png,.pdf,.jpg,.jpeg,.png">' +
+          '<p class="fhelp">PDF أو JPG أو PNG · الحد الأقصى ' + esc(p.max_mb) + ' ميجابايت. رفع الإيصال لا يعني تأكيد السداد — نتحقق منه أولًا.</p>' +
+          '<div class="erow"><button type="submit" class="btn btn-primary btn-sm"><span class="btn-label">رفع الإيصال</span></button></div>' +
+          '<div class="emsg" role="status"></div></form>';
+      } else if (p.status === 'receipt_uploaded' || p.status === 'under_review') {
+        rBody += '<p class="tiny muted">وصلنا إيصالك. سنتحقق من التحويل ونحدّث حالتك هنا.</p>';
+      }
+      if (p.receipts && p.receipts.length) {
+        var U = FluentStore.urls();
+        rBody += '<ul class="ereceipts">';
+        p.receipts.forEach(function (r) {
+          rBody += '<li><a href="' + esc(U.receiptDownloadUrl + '/' + encodeURIComponent(r.id)) + '">' + ICON.doc +
+            '<span dir="ltr">' + esc(r.name) + '</span></a><span class="tiny muted">' + esc(r.uploaded_at) + ' · ' + esc(r.review) + '</span></li>';
+        });
+        rBody += '</ul>';
+      }
+    }
+    html += stepHtml(5, !a.accepted ? 'locked' : (p.status === 'verified' ? 'done' : (p.can_upload ? 'on' : 'wait')), 'رفع إيصال التحويل', rBody);
+
+    /* 6 — تأكيد المقعد */
+    var sBody = (seat.confirmed || final)
+      ? '<p>تم تأكيد مقعدك' + (seat.confirmed_at ? ' في ' + esc(seat.confirmed_at) : '') + '. أنت الآن مقبول نهائيًا.</p>'
+      : '<p class="muted">بعد التحقق من السداد يؤكد فريق Fluent مقعدك، وتصبح مقبولًا نهائيًا.</p>';
+    html += stepHtml(6, (seat.confirmed || final) ? 'done' : (p.status === 'verified' ? 'wait' : 'locked'), 'تأكيد المقعد', sBody);
+
+    return html + '</ol></section>';
+  }
+
+  function payTone(st) {
+    return st === 'verified' ? 'good' : (st === 'reupload_requested' ? 'hold' : (st === 'awaiting_transfer' ? 'neutral' : 'signal'));
+  }
+
+  /* ---- صفحة الاتفاقية ---- */
+  function agreementView() {
+    var e = app.enrollment;
+    if (!e || !e.agreement || (!e.agreement.accepted && !e.ready)) {
+      return '<div class="hello"><h1>اتفاقية المشاركة</h1><p>الاتفاقية قيد الإعداد لدفعتك.</p></div>';
+    }
+    var a = e.agreement, d = a.details || {};
+    var rows = [
+      ['الطرف الأول', d.party], ['المشارك', d.participant], ['رقم الطلب', d.reference],
+      ['الدفعة', d.cohort], ['تاريخ البداية', d.start_date], ['الوقت', d.schedule], ['الموقع', d.location],
+      ['الرسوم', d.fee], ['طريقة السداد', d.payment_method], ['آخر موعد للسداد', d.payment_deadline]
+    ];
+    var html = '<div class="hello"><h1>' + esc(a.title) + '</h1><p>النسخة ' + esc(a.version) +
+      (a.accepted ? ' · وافقت عليها في ' + esc(a.accepted_at) : ' · اقرأها كاملة قبل الموافقة') + '</p></div>' +
+      '<section class="card agree">' +
+        '<h2 class="agree-h">بيانات الدفعة والرسوم</h2><dl class="dl">';
+    rows.forEach(function (r) {
+      var v = String(r[1] || '').trim();
+      html += '<div><dt>' + esc(r[0]) + '</dt><dd' + (v ? '' : ' class="tbd"') + '>' + esc(v || 'يُعلن لاحقًا') + '</dd></div>';
+    });
+    /* a.html is rendered on the server from Markdown with raw HTML escaped */
+    html += '</dl><div class="agree-body">' + a.html + '</div>';
+
+    if (a.accepted) {
+      html += '<div class="enext t-good"><b>تمت الموافقة</b><span>' + esc(a.statement) + '</span></div>';
+    } else if (app.status === 'preliminary_accepted') {
+      html += '<form class="eagree" novalidate>' +
+        '<label class="fopt"><input type="checkbox" name="confirm" id="e-confirm"><span class="fbox is-check" aria-hidden="true"></span><span>' + esc(a.statement) + '</span></label>' +
+        '<div class="erow"><button type="submit" class="btn btn-primary" disabled><span class="btn-label">أوافق على الاتفاقية</span>' + ICON.arrow + '</button>' +
+        '<button type="button" class="btn btn-outline" data-go="overview">رجوع</button></div>' +
+        '<div class="emsg" role="status"></div></form>';
+    }
+    html += '</section>';
+    if (a.accepted) html += '<p style="margin-top:1.2rem"><button type="button" class="btn btn-outline" data-go="overview">رجوع إلى خطوات تأكيد المقعد</button></p>';
+    return html;
+  }
+
+  /* ---- ربط النماذج بالخادم ---- */
+  function say(form, text, ok) {
+    var m = form.querySelector('.emsg');
+    if (m) { m.textContent = text || ''; m.className = 'emsg ' + (ok ? 'is-ok' : 'is-err'); }
+  }
+  function failText(res) {
+    if (res.status === 429) return 'محاولات كثيرة. انتظر دقيقة ثم أعد المحاولة.';
+    if (res.status === 419) return 'انتهت صلاحية الصفحة. حدّث الصفحة ثم أعد المحاولة.';
+    return (res.body && res.body.message) || 'تعذّر الحفظ. تحقّق من الاتصال وأعد المحاولة.';
+  }
+
+  function bindEnrollment() {
+    var U = FluentStore.urls();
+    Array.prototype.forEach.call(view.querySelectorAll('[data-go]'), function (b) {
+      b.addEventListener('click', function () { current = b.dataset.go; render(); window.scrollTo(0, 0); });
+    });
+
+    var ag = view.querySelector('form.eagree');
+    if (ag) {
+      var cb = ag.querySelector('#e-confirm'), btn = ag.querySelector('button[type=submit]');
+      cb.addEventListener('change', function () { btn.disabled = !cb.checked; });
+      ag.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        if (!cb.checked) { say(ag, 'لا بد من الإقرار بقراءة الاتفاقية والموافقة عليها للمتابعة.'); return; }
+        btn.disabled = true;
+        var a = app.enrollment.agreement;
+        FluentStore.post(U.agreementUrl, { agreement_id: a.id, hash: a.hash, confirm: 1 }, app.reference).then(function (res) {
+          if (res.status === 200) { current = 'overview'; render(); window.scrollTo(0, 0); return; }
+          btn.disabled = false; say(ag, failText(res));
+          if (res.body && res.body.code === 'agreement_changed') setTimeout(render, 2500);
+        }).catch(function () { btn.disabled = false; say(ag, 'تعذّر الاتصال. أعد المحاولة.'); });
+      });
+    }
+
+    var md = view.querySelector('form.emedia');
+    if (md) {
+      md.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var c = md.querySelector('input[name=granted]:checked');
+        if (!c) { say(md, 'اختر «أوافق» أو «لا أوافق».'); return; }
+        FluentStore.post(U.mediaUrl, { granted: c.value }, app.reference).then(function (res) {
+          if (res.status === 200) { render(); return; }
+          say(md, failText(res));
+        }).catch(function () { say(md, 'تعذّر الاتصال. أعد المحاولة.'); });
+      });
+    }
+
+    var rc = view.querySelector('form.ereceipt');
+    if (rc) {
+      rc.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var input = rc.querySelector('input[type=file]'), f = input.files && input.files[0];
+        var max = (app.enrollment.payment.max_mb || 5) * 1024 * 1024;
+        if (!f) { say(rc, 'اختر ملف الإيصال.'); return; }
+        if (!/\.(pdf|jpe?g|png)$/i.test(f.name)) { say(rc, 'الصيغ المقبولة: PDF أو JPG أو PNG.'); return; }
+        if (f.size > max) { say(rc, 'حجم الملف أكبر من الحد المسموح (5 ميجابايت).'); return; }
+        var btn = rc.querySelector('button[type=submit]'), lab = btn.querySelector('.btn-label');
+        btn.disabled = true; lab.textContent = 'جارٍ رفع الملف…';
+        var fd = new FormData(); fd.append('receipt', f, f.name);
+        FluentStore.post(U.receiptUrl, fd, app.reference).then(function (res) {
+          if (res.status === 200) { render(); return; }
+          btn.disabled = false; lab.textContent = 'رفع الإيصال'; say(rc, failText(res));
+        }).catch(function () { btn.disabled = false; lab.textContent = 'رفع الإيصال'; say(rc, 'تعذّر الاتصال. أعد المحاولة.'); });
+      });
+    }
+  }
+
   /* ============================================================
      العرض
      ============================================================ */
@@ -229,6 +469,7 @@
     }
 
     if (app.status === 'final_accepted') html += acceptance(settings.cohort);
+    if (app.enrollment && app.status === 'preliminary_accepted') html += enrollmentSection(app.enrollment, false);
 
     html +=
       '<div class="portal-grid">' +
@@ -254,6 +495,9 @@
             '<a href="/" class="tiny muted" style="display:inline-flex;align-items:center;gap:.4rem">العودة إلى موقع Fluent</a></p>' +
         '</aside>' +
       '</div>';
+
+    /* After final acceptance: the completed steps stay visible (agreement, media choice, receipts) */
+    if (app.enrollment && app.status === 'final_accepted') html += enrollmentSection(app.enrollment, true);
 
     return html;
   }
@@ -308,7 +552,12 @@
       }
 
       who.textContent = firstName(app.full_name);
-      view.innerHTML = current === 'profile' ? profile() : overview(settings);
+      if (current === 'agreement' && !app.enrollment) current = 'overview';
+      view.innerHTML = current === 'profile' ? profile() : (current === 'agreement' ? agreementView() : overview(settings));
+      Array.prototype.forEach.call(nav.children, function (n) {
+        n.classList.toggle('is-on', n.dataset.view === (current === 'agreement' ? 'overview' : current));
+      });
+      bindEnrollment();
     });
   }
 
@@ -319,6 +568,10 @@
     if (e.key && e.key.indexOf('fluent.demo') === 0) render();
   });
   document.addEventListener('visibilitychange', function () {
-    if (!document.hidden) render();
+    if (document.hidden) return;
+    var f = view.querySelector('form.ereceipt input[type=file]');
+    if (f && f.files && f.files.length) return;          /* don't drop a file the student just picked */
+    if (view.querySelector('#e-confirm:checked')) return;
+    render();
   });
 })();

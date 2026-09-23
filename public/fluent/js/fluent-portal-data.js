@@ -67,6 +67,22 @@
       });
     },
     applications: function () { return (cache && cache.applications) || []; },
+
+    /* Seat-confirmation steps (agreement / media consent / receipt). JSON or FormData body.
+       The application reference is always sent; the server resolves it through the
+       signed-in student's own applications only. */
+    post: function (url, body, reference) {
+      var isForm = (typeof FormData !== 'undefined') && body instanceof FormData;
+      var headers = { 'Accept': 'application/json', 'X-CSRF-TOKEN': P.csrf || '', 'X-Requested-With': 'XMLHttpRequest' };
+      if (isForm) { body.append('application', reference); }
+      else { body = JSON.stringify(Object.assign({ application: reference }, body || {})); headers['Content-Type'] = 'application/json'; }
+      return fetch(url, { method: 'POST', credentials: 'same-origin', headers: headers, body: body })
+        .then(function (r) {
+          if (r.status === 401) { location.replace(P.loginUrl); return new Promise(function () {}); }
+          return r.json().catch(function () { return {}; }).then(function (b) { return { status: r.status, body: b }; });
+        });
+    },
+    urls: function () { return P; },
     signOut: function () {
       return fetch(P.logoutUrl, {
         method: 'POST', credentials: 'same-origin',
