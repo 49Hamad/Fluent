@@ -4,14 +4,15 @@
     e-mail are now Laravel-driven. The form itself is built by the
     prototype engine (fluent-forms.js) from fluent-schemas.js.
 
-    FRONTEND REVIEW MODE: the engine runs with previewMode = true, so it
-    validates locally and shows the confirmation screen but sends, uploads
-    and stores NOTHING. The Laravel submission backend is a later phase.
+    LIVE (Phase 2): the approved 2-step form posts to Laravel
+    (BusinessChallengeController), which validates again, stores the
+    challenge + optional private PDF, and returns the reference number shown
+    on the approved confirmation screen. Managed in Filament → تحديات الشركات.
 --}}
 @php
     $contactEmail = \App\Support\FluentContact::email();   // managed in Filament
 @endphp
-<x-layouts.fluent :title="'شاركنا تحديًا — Fluent'" description="شارك تحديًا أو مشروعًا حقيقيًا من جهتك ليعمل عليه المشاركون في محاكاة Fluent المهنية، وتستلم مخرجات مفيدة." :noindex="true" :site-script="false">
+<x-layouts.fluent :title="'شاركنا تحديًا — Fluent'" description="شارك تحديًا أو مشروعًا حقيقيًا من جهتك ليعمل عليه المشاركون في محاكاة Fluent المهنية، وتستلم مخرجات مفيدة." :site-script="false">
 <!-- ==================== رأس الصفحة ==================== -->
 <section class="fhead" aria-labelledby="p-h">
   <div class="fhead-bg" aria-hidden="true">
@@ -69,7 +70,7 @@
       </div>
       <div class="fnote">
         <h2 class="fnote-h">السرّية</h2>
-        <p>لا نطلب بيانات سرّية في هذا النموذج. إذا كان التحدي حسّاسًا، علّم الخيار المخصّص وسنناقش حدود المشاركة قبل أي اعتماد.</p>
+        <p>لا نطلب بيانات سرّية في هذا النموذج. إذا كان التحدي حسّاسًا، اختر «نعم» في سؤال المعلومات السرية والقيود ووضّحها، وسنناقش حدود المشاركة قبل أي اعتماد.</p>
         <p style="margin-top:1rem">للاستفسار: <a href="mailto:{{ $contactEmail }}" dir="ltr">{{ $contactEmail }}</a></p>
       </div>
     </aside>
@@ -78,7 +79,10 @@
 </section>
 
 @push('scripts')
-  @include('fluent.partials.form-config')
+  @include('fluent.partials.form-config', [
+      'formLive' => true,
+      'formEndpoint' => route('fluent.challenge.store'),
+  ])
   <script src="{{ asset('fluent/js/fluent-schemas.js') }}"></script>
   <script src="{{ asset('fluent/js/fluent-forms.js') }}"></script>
   <script>
