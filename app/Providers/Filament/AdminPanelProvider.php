@@ -11,6 +11,7 @@ use Filament\Support\Colors\Color;
 use App\Filament\Resources\HeroResource;
 use App\Filament\Resources\CohortResource;
 use App\Filament\Resources\StudentApplicationResource;
+use App\Filament\Resources\BusinessChallengeResource;
 use App\Filament\Resources\UserResource;
 use Filament\Navigation\NavigationGroup;
 use App\Filament\Resources\AboutResource;
@@ -61,11 +62,13 @@ class AdminPanelProvider extends PanelProvider
             ->profile()
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder->groups([
-                    // Phase 2 — Fluent simulation (cohorts & student applications)
+                    // Phase 2 — Fluent simulation (cohorts, student applications, company challenges)
                     NavigationGroup::make('المحاكاة')
                         ->items([
                             ...StudentApplicationResource::getNavigationItems(),
                             ...CohortResource::getNavigationItems(),
+                            // shown only to employees with the Shield permission
+                            ...(BusinessChallengeResource::canViewAny() ? BusinessChallengeResource::getNavigationItems() : []),
                         ]),
 
                     NavigationGroup::make('الموظفين')
