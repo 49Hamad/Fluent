@@ -30,8 +30,13 @@ class AgreementResource extends Resource
     protected static ?string $pluralModelLabel = 'الاتفاقيات';
     protected static ?int $navigationSort = 5;
 
-    /** Placeholders of the starting draft that must be completed before activation. */
-    public const PLACEHOLDER = '[تحدد Fluent';
+    /** Any unfilled "[ … ]" placeholder (a Markdown link "[text](url)" is allowed). */
+    public const PLACEHOLDER_PATTERN = '/\[[^\]\n]*\](?!\()/u';
+
+    public static function hasPlaceholders(?string $content): bool
+    {
+        return (bool) preg_match(self::PLACEHOLDER_PATTERN, (string) $content);
+    }
 
     public static function form(Form $form): Form
     {
@@ -54,7 +59,7 @@ class AgreementResource extends Resource
                 Forms\Components\Toggle::make('is_active')->label('مفعّلة (تظهر للطلاب المقبولين مبدئيًا)')
                     ->helperText('تفعيلها يوقف تلقائيًا أي اتفاقية مفعّلة أخرى لنفس الدفعة.')
                     ->rule(fn (Forms\Get $get) => function (string $attribute, $value, \Closure $fail) use ($get) {
-                        if ($value && str_contains((string) $get('content'), self::PLACEHOLDER)) {
+                        if ($value && self::hasPlaceholders($get('content'))) {
                             $fail('أكمل البنود المحددة بين [ ] في النص قبل تفعيل الاتفاقية.');
                         }
                     })->inline(false),
