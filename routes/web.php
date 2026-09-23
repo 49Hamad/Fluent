@@ -2,11 +2,25 @@
 
 use App\Livewire\FormFeedBack;
 use App\Http\Controllers\FluentFrontendController;
+use App\Http\Controllers\StudentApplicationController;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\HomePage\ShowHomePage;
 
 Route::get('/',ShowHomePage::class)->name('home');
 Route::get('/feedback-form/{id}',FormFeedBack::class)->name('feedback_form');
+
+/*
+|--------------------------------------------------------------------------
+| Phase 2 — real student application
+|--------------------------------------------------------------------------
+| /apply shows the approved form for the cohort that is open in Filament
+| (or the approved closed / waitlist state). Submissions are stored in
+| student_applications and appear in Filament → طلبات الطلاب.
+*/
+Route::get('/apply', [FluentFrontendController::class, 'apply'])->name('fluent.apply');
+Route::post('/apply', [StudentApplicationController::class, 'store'])
+    ->middleware('throttle:6,1')   // max 6 submissions per minute per visitor
+    ->name('fluent.apply.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +31,6 @@ Route::get('/feedback-form/{id}',FormFeedBack::class)->name('feedback_form');
 | is true (default: every environment except production).
 | See App\Http\Controllers\FluentFrontendController.
 */
-Route::get('/apply', [FluentFrontendController::class, 'apply'])->name('fluent.apply');
 Route::get('/challenge', [FluentFrontendController::class, 'challenge'])->name('fluent.challenge');
 Route::get('/login', [FluentFrontendController::class, 'login'])->name('fluent.login');
 Route::get('/portal', [FluentFrontendController::class, 'portal'])->name('fluent.portal');
