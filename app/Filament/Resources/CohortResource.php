@@ -64,6 +64,19 @@ class CohortResource extends Resource
                         ]),
                 ]),
 
+            Forms\Components\Section::make('الرسوم والسداد')
+                ->description('تظهر للطالب المقبول مبدئيًا ضمن بيانات الاتفاقية، وتفاصيل الحساب تظهر له بعد موافقته على الاتفاقية.')
+                ->schema([
+                    Forms\Components\TextInput::make('fee_amount')->label('رسوم المشاركة')->numeric()->minValue(0)->maxValue(1000000)
+                        ->step('0.01')->suffix('ريال سعودي')
+                        ->helperText('المبلغ الذي يُطلب من الطالب تحويله لتأكيد مقعده.'),
+                    Forms\Components\DatePicker::make('payment_deadline')->label('آخر موعد للسداد (اختياري)'),
+                    Forms\Components\Select::make('payment_method_id')->label('حساب التحويل البنكي')
+                        ->relationship('paymentMethod', 'name', fn ($query) => $query->where('is_active', true))
+                        ->native(false)
+                        ->helperText('يُدار من «المحاكاة ← طرق الدفع».'),
+                ])->columns(3)->collapsible(),
+
             Forms\Components\Section::make('معلومات للمقبولين نهائيًا')
                 ->description('تظهر لاحقًا في مساحة الطالب وفي بريد القبول النهائي.')
                 ->schema([
@@ -81,6 +94,8 @@ class CohortResource extends Resource
                 Tables\Columns\TextColumn::make('name')->label('الدفعة')->searchable()->weight('bold'),
                 Tables\Columns\TextColumn::make('start_date')->label('تاريخ البداية')->date('Y-m-d')->placeholder('—'),
                 Tables\Columns\TextColumn::make('registration_status')->label('التسجيل')->badge(),
+                Tables\Columns\TextColumn::make('fee_amount')->label('الرسوم')->placeholder('—')
+                    ->formatStateUsing(fn ($state) => \App\Services\EnrollmentService::money($state))->toggleable(),
                 Tables\Columns\TextColumn::make('applications_count')->label('الطلبات')->counts('applications')->badge()->color('gray'),
             ])
             ->actions([

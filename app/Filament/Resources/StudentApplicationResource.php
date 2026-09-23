@@ -103,10 +103,14 @@ class StudentApplicationResource extends Resource
                     ->action(function (Collection $records, array $data) {
                         $result = ['changed' => 0, 'emailed' => 0, 'failed' => 0];
                         foreach ($records as $record) {
-                            $r = app(StudentApplicationStatusService::class)->change(
-                                $record, ApplicationStatus::from($data['status']), auth()->user(),
-                                (bool) ($data['notify_student'] ?? false), $data['message_to_student'] ?? null
-                            );
+                            try {
+                                $r = app(StudentApplicationStatusService::class)->change(
+                                    $record, ApplicationStatus::from($data['status']), auth()->user(),
+                                    (bool) ($data['notify_student'] ?? false), $data['message_to_student'] ?? null
+                                );
+                            } catch (\App\Services\WorkflowException $e) {
+                                continue;   // e.g. «مقبول نهائيًا» only via seat confirmation
+                            }
                             $result['changed'] += (int) $r['changed'];
                             $result['emailed'] += (int) $r['emailed'];
                             $result['failed'] += (int) $r['email_failed'];
@@ -128,9 +132,13 @@ class StudentApplicationResource extends Resource
         return [
             Forms\Components\Select::make('status')
                 ->label('الحالة الجديدة')
-                ->options(ApplicationStatus::class)
+                // «مقبول نهائيًا» is reached only via «تأكيد المقعد» (السداد وتأكيد المقاعد).
+                ->options(collect(ApplicationStatus::cases())
+                    ->reject(fn (ApplicationStatus $s) => $s === ApplicationStatus::FinalAccepted && $record?->status !== ApplicationStatus::FinalAccepted)
+                    ->mapWithKeys(fn (ApplicationStatus $s) => [$s->value => $s->getLabel()])->all())
                 ->default($record?->status?->value)
                 ->required()
+                ->helperText('القبول النهائي يتم من «السداد وتأكيد المقاعد» بعد الموافقة على الاتفاقية والتحقق من السداد. اختيار «مقبول مبدئيًا» يفتح للطالب خطوات تأكيد المقعد.')
                 ->native(false),
             Forms\Components\Toggle::make('notify_student')
                 ->label('إبلاغ الطالب بالبريد')
@@ -160,10 +168,15 @@ class StudentApplicationResource extends Resource
 
     public static function applyStatus(StudentApplication $record, array $data): void
     {
-        $r = app(StudentApplicationStatusService::class)->change(
+        try {
+            $r = app(StudentApplicationStatusService::class)->change(
             $record, ApplicationStatus::from($data['status']), auth()->user(),
             (bool) ($data['notify_student'] ?? false), $data['message_to_student'] ?? null
-        );
+            );
+        } catch (\App\Services\WorkflowException $e) {
+            Notification::make()->danger()->title('لم تتغير الحالة')->body($e->getMessage())->send();
+            return;
+        }
         self::reportResult((int) $r['changed'], (int) $r['emailed'], (int) $r['email_failed']);
     }
 
