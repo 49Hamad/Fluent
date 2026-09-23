@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cohort;
 use App\Support\FluentContact;
 use Illuminate\Http\Request;
 
 /**
- * Redesign — new public screens in FRONTEND REVIEW MODE.
+ * Redesign — new public screens.
  *
- * The approved UI (student application, business challenge, student login,
- * student portal) is shown before its Laravel backend exists:
+ * LIVE (Phase 2): the student application page (real submission, see
+ * StudentApplicationController), driven by the cohort whose registration
+ * is open / waitlist in Filament → الدفعات.
+ *
+ * Still FRONTEND REVIEW MODE (business challenge, student login, portal):
  *   - forms validate locally and show the confirmation screen, but
  *     send / upload / store NOTHING
  *   - the login screen signs nobody in (no fake auth, not Filament auth)
@@ -24,9 +28,15 @@ class FluentFrontendController extends Controller
 {
     private const PORTAL_STATES = ['received', 'review', 'interview', 'accepted', 'waitlist', 'rejected'];
 
+    /** Real application page — state comes from Filament → الدفعات. */
     public function apply()
     {
-        return $this->reviewView('fluent.pages.apply');
+        $cohort = Cohort::currentForApplications();
+
+        return view('fluent.pages.apply', [
+            'cohort' => $cohort,
+            'registration' => $cohort?->registration_status->value ?? 'closed',
+        ]);
     }
 
     public function challenge()
