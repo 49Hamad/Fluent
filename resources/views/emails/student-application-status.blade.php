@@ -43,6 +43,12 @@
             </table>
           @endif
 
+          @if ($status === \App\Enums\ApplicationStatus::PreliminaryAccepted)
+            <p style="margin:0 0 20px">
+              <a href="{{ route('fluent.login') }}" style="display:inline-block;background:#0f0f0f;color:#f4f4f4;text-decoration:none;padding:10px 20px;border-radius:24px;font-size:15px">ادخل مساحتك وأكمل الخطوات</a>
+            </p>
+          @endif
+
           @if (filled($extraMessage))
             <p style="margin:0 0 16px;white-space:pre-line">{{ $extraMessage }}</p>
           @endif
