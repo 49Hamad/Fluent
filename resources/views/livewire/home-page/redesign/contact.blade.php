@@ -82,6 +82,7 @@
             <span class="spacer"></span>
             <span class="fmeta">نرد على رسالتك عبر البريد الإلكتروني.</span>
           </div>
+          <p class="fprivacy">نستخدم بياناتك للرد على رسالتك، وفق <a href="{{ route('fluent.privacy') }}" target="_blank" rel="noopener">سياسة الخصوصية</a>.</p>
         </form>
       </div>
 
