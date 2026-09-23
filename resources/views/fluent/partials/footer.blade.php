@@ -63,7 +63,7 @@
     </div>
     <div class="ft-bot">
       <span><span dir="ltr" class="num">© {{ now()->format('Y') }} Fluent</span> — جميع الحقوق محفوظة.</span>
-      <span>المملكة العربية السعودية</span>
+      <span><a href="{{ route('fluent.privacy') }}">سياسة الخصوصية</a> · المملكة العربية السعودية</span>
     </div>
   </div>
 </footer>
