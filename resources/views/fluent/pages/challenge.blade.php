@@ -82,6 +82,7 @@
   @include('fluent.partials.form-config', [
       'formLive' => true,
       'formEndpoint' => route('fluent.challenge.store'),
+      'openBadge' => 'استقبال التحديات متاح الآن',
   ])
   <script src="{{ asset('fluent/js/fluent-schemas.js') }}"></script>
   <script src="{{ asset('fluent/js/fluent-forms.js') }}"></script>
