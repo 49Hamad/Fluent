@@ -18,11 +18,19 @@ use Illuminate\Support\Str;
  *    but the visitor always gets the same neutral answer (no account discovery).
  *  - Codes: 10 minutes, one use, max 5 wrong attempts, stored as a keyed hash.
  *  - Requesting a new code cancels the previous one.
- *  - Rate limits per e-mail and per IP for both requesting and verifying.
+ *  - Rate limits per e-mail (tight) and per IP (generous — students often share
+ *    a university network) for both requesting and verifying. Limits are counted
+ *    the same way whether or not the e-mail exists.
  */
 class StudentLoginService
 {
     public const RESEND_COOLDOWN_SECONDS = 60;
+
+    /* Per 10 minutes. Per e-mail = one person; per IP = a whole shared network. */
+    public const CODE_PER_EMAIL = 3;
+    public const CODE_PER_IP = 60;
+    public const VERIFY_FAILS_PER_EMAIL = 10;
+    public const VERIFY_FAILS_PER_IP = 100;
 
     /**
      * @return array{ok: bool, retry_after?: int}
@@ -33,8 +41,8 @@ class StudentLoginService
         $emailKey = 'student-code-email:' . sha1($email);
         $ipKey = 'student-code-ip:' . $ip;
 
-        // Max 3 codes / 10 min per e-mail, 10 / 10 min per IP (whether or not the e-mail exists).
-        foreach ([[$emailKey, 3], [$ipKey, 10]] as [$key, $max]) {
+        // Max 3 codes / 10 min per e-mail, 60 / 10 min per IP (whether or not the e-mail exists).
+        foreach ([[$emailKey, self::CODE_PER_EMAIL], [$ipKey, self::CODE_PER_IP]] as [$key, $max]) {
             if (RateLimiter::tooManyAttempts($key, $max)) {
                 return ['ok' => false, 'retry_after' => RateLimiter::availableIn($key)];
             }
@@ -83,7 +91,8 @@ class StudentLoginService
         $emailKey = 'student-verify-email:' . sha1($email);
         $ipKey = 'student-verify-ip:' . $ip;
 
-        foreach ([[$emailKey, 10], [$ipKey, 30]] as [$key, $max]) {
+        // Wrong codes: max 10 / 10 min per e-mail, 100 / 10 min per IP (plus 5 tries per code).
+        foreach ([[$emailKey, self::VERIFY_FAILS_PER_EMAIL], [$ipKey, self::VERIFY_FAILS_PER_IP]] as [$key, $max]) {
             if (RateLimiter::tooManyAttempts($key, $max)) {
                 return ['student' => null, 'retry_after' => RateLimiter::availableIn($key)];
             }
