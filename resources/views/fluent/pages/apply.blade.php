@@ -4,14 +4,16 @@
     e-mail are now Laravel-driven. The form itself is built by the
     prototype engine (fluent-forms.js) from fluent-schemas.js.
 
-    FRONTEND REVIEW MODE: the engine runs with previewMode = true, so it
-    validates locally and shows the confirmation screen but sends, uploads
-    and stores NOTHING. The Laravel submission backend is a later phase.
+    LIVE (Phase 2): the approved 3-step form posts to Laravel
+    (StudentApplicationController), which validates again, stores the
+    application + private CV, and returns the reference number shown on the
+    approved confirmation screen. Open / waitlist / closed comes from the
+    cohort set in Filament → الدفعات.
 --}}
 @php
     $contactEmail = \App\Support\FluentContact::email();   // managed in Filament
 @endphp
-<x-layouts.fluent :title="'سجّل في المحاكاة — Fluent'" description="سجّل في تجربة المحاكاة المهنية من Fluent: بيئة عمل محاكية، فريق، أدوار، ومشروع بمواعيد تسليم حقيقية." :noindex="true" :site-script="false">
+<x-layouts.fluent :title="'سجّل في المحاكاة — Fluent'" description="سجّل في تجربة المحاكاة المهنية من Fluent: بيئة عمل محاكية، فريق، أدوار، ومشروع بمواعيد تسليم حقيقية." :site-script="false">
 <!-- ==================== رأس الصفحة ==================== -->
 <section class="fhead" aria-labelledby="p-h">
   <div class="fhead-bg" aria-hidden="true">
@@ -75,7 +77,12 @@
 </section>
 
 @push('scripts')
-  @include('fluent.partials.form-config')
+  @include('fluent.partials.form-config', [
+      'formLive' => (bool) $cohort,
+      'formEndpoint' => route('fluent.apply.store'),
+      'formExtra' => ['cohort_id' => $cohort?->id],
+      'studentRegistration' => $registration,
+  ])
   <script src="{{ asset('fluent/js/fluent-schemas.js') }}"></script>
   <script src="{{ asset('fluent/js/fluent-forms.js') }}"></script>
   <script>
