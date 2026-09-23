@@ -3,6 +3,9 @@
 use App\Livewire\FormFeedBack;
 use App\Http\Controllers\FluentFrontendController;
 use App\Http\Controllers\StudentApplicationController;
+use App\Http\Controllers\StudentAuthController;
+use App\Http\Controllers\StudentPortalController;
+use App\Http\Middleware\EnsureStudentIsAuthenticated;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\HomePage\ShowHomePage;
 
@@ -24,6 +27,25 @@ Route::post('/apply', [StudentApplicationController::class, 'store'])
 
 /*
 |--------------------------------------------------------------------------
+| Phase 2 — student sign-in + «مساحتي في Fluent»
+|--------------------------------------------------------------------------
+| Password-less: e-mail → 6-digit code (10 min, one use, rate-limited).
+| Separate "student" guard — nothing to do with employees / Filament.
+*/
+Route::get('/login', [StudentAuthController::class, 'show'])->name('fluent.login');
+Route::post('/login/code', [StudentAuthController::class, 'requestCode'])
+    ->middleware('throttle:20,1')->name('fluent.login.code');
+Route::post('/login/verify', [StudentAuthController::class, 'verify'])
+    ->middleware('throttle:30,1')->name('fluent.login.verify');
+
+Route::middleware(EnsureStudentIsAuthenticated::class)->group(function () {
+    Route::get('/portal', [StudentPortalController::class, 'show'])->name('fluent.portal');
+    Route::get('/portal/data', [StudentPortalController::class, 'data'])->name('fluent.portal.data');
+    Route::post('/portal/logout', [StudentAuthController::class, 'logout'])->name('fluent.logout');
+});
+
+/*
+|--------------------------------------------------------------------------
 | Redesign — new public screens (FRONTEND REVIEW MODE)
 |--------------------------------------------------------------------------
 | Approved UI shown before its backend exists; nothing is sent or stored,
@@ -32,8 +54,4 @@ Route::post('/apply', [StudentApplicationController::class, 'store'])
 | See App\Http\Controllers\FluentFrontendController.
 */
 Route::get('/challenge', [FluentFrontendController::class, 'challenge'])->name('fluent.challenge');
-Route::get('/login', [FluentFrontendController::class, 'login'])->name('fluent.login');
-Route::get('/portal', [FluentFrontendController::class, 'portal'])->name('fluent.portal');
 
-// DEVELOPMENT ONLY — student portal preview with in-memory mock data.
-Route::get('/preview/portal', [FluentFrontendController::class, 'portalPreview'])->name('fluent.preview.portal');
