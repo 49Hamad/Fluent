@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\FormFeedBack;
+use App\Http\Controllers\BusinessChallengeController;
 use App\Http\Controllers\FluentFrontendController;
 use App\Http\Controllers\StudentApplicationController;
 use App\Http\Controllers\StudentAuthController;
@@ -46,12 +47,13 @@ Route::middleware(EnsureStudentIsAuthenticated::class)->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Redesign — new public screens (FRONTEND REVIEW MODE)
+| Phase 2 — «شاركنا تحديًا» (company challenges)
 |--------------------------------------------------------------------------
-| Approved UI shown before its backend exists; nothing is sent or stored,
-| nobody is signed in. All answer 404 unless config('fluent.frontend_preview')
-| is true (default: every environment except production).
-| See App\Http\Controllers\FluentFrontendController.
+| Submissions are stored in business_challenges (optional PDF on a private
+| disk) and appear in Filament → المحاكاة → تحديات الشركات.
+| Rate limit "challenge-submit" (AppServiceProvider): 5/minute, 20/day per visitor.
 */
 Route::get('/challenge', [FluentFrontendController::class, 'challenge'])->name('fluent.challenge');
-
+Route::post('/challenge', [BusinessChallengeController::class, 'store'])
+    ->middleware('throttle:challenge-submit')
+    ->name('fluent.challenge.store');
