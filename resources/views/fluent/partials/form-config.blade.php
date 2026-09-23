@@ -3,9 +3,9 @@
     adapted for Laravel. Supabase and localStorage are NOT used.
 
     Variables (all optional):
-      $formLive      true  → real submission to Laravel ($formEndpoint)   [student application]
-                     false → frontend review mode: validates, shows the
-                             confirmation screen, sends/stores nothing   [challenge, until built]
+      $formLive      true  → real submission to Laravel ($formEndpoint)   [student application, challenge]
+                     false → review mode: validates, shows the confirmation
+                             screen, sends/stores nothing (e.g. apply page with no cohort)
       $formEndpoint  POST URL for the live mode
       $formExtra     extra fields sent with the form (e.g. cohort_id)
       $studentRegistration  open | waitlist | closed  (from Filament → الدفعات)
