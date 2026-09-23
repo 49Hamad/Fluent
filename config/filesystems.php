@@ -47,6 +47,14 @@ return [
             'throw' => false,
         ],
 
+        // Company challenge attachments — private (never served by URL)
+        'challenges' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/challenges'),
+            'serve' => false,
+            'throw' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

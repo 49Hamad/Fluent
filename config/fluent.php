@@ -4,21 +4,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Frontend review mode (redesign)
-    |--------------------------------------------------------------------------
-    | Screens migrated from the approved design BEFORE their backend exists.
-    | Now only the business challenge page: it validates locally and shows
-    | the confirmation screen, but sends and stores NOTHING.
-    | (Student application, login and portal are live since Phase 2.)
-    |
-    | Default: enabled everywhere EXCEPT production. Set
-    | FLUENT_FRONTEND_PREVIEW=false to switch it off.
-    */
-    'frontend_preview' => (bool) env('FLUENT_FRONTEND_PREVIEW', env('APP_ENV', 'production') !== 'production'),
-
-
-    /*
-    |--------------------------------------------------------------------------
     | Public contact details — FALLBACK ONLY
     |--------------------------------------------------------------------------
     | The real values are edited in Filament → الإعدادات العامة → روابط التواصل
