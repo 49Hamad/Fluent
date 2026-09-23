@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Mail;
  * The ONE place where an application's status changes.
  * Used by Filament (single + bulk). Records history and, only when the
  * employee ticks "إبلاغ الطالب بالبريد", e-mails the student.
+ *
+ * Seat-confirmation workflow:
+ *  - moving to «مقبول مبدئيًا» opens the agreement / payment track;
+ *  - «مقبول نهائيًا» can ONLY be reached through the explicit seat
+ *    confirmation (EnrollmentService::confirmSeat → $seatConfirmation = true).
  */
 class StudentApplicationStatusService
 {
@@ -26,9 +31,14 @@ class StudentApplicationStatusService
         ?User $by,
         bool $notifyStudent = false,
         ?string $messageToStudent = null,
+        bool $seatConfirmation = false,
     ): array {
         $from = $application->status;
         $changed = $from !== $to;
+
+        if ($changed && $to === ApplicationStatus::FinalAccepted && ! $seatConfirmation) {
+            throw new WorkflowException('القبول النهائي يتم فقط عبر «تأكيد المقعد» بعد التحقق من السداد.', 'seat_confirmation_required');
+        }
 
         DB::transaction(function () use ($application, $from, $to, $by, $changed, $notifyStudent) {
             if ($changed) {
@@ -40,6 +50,9 @@ class StudentApplicationStatusService
                 'changed_by' => $by?->id,
                 'student_notified' => false,
             ]);
+            if ($to === ApplicationStatus::PreliminaryAccepted) {
+                app(EnrollmentService::class)->open($application);
+            }
         });
 
         $emailed = false;
