@@ -47,7 +47,8 @@ class StudentApplicationPolicy
      */
     public function delete(User $user, StudentApplication $studentApplication): bool
     {
-        return $user->can('delete_student::application');
+        // An application with agreement / media-consent / payment evidence is kept (legal record).
+        return $user->can('delete_student::application') && ! $studentApplication->hasEnrollmentEvidence();
     }
 
     /**
