@@ -9,6 +9,8 @@ use Filament\PanelProvider;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use App\Filament\Resources\HeroResource;
+use App\Filament\Resources\CohortResource;
+use App\Filament\Resources\StudentApplicationResource;
 use App\Filament\Resources\UserResource;
 use Filament\Navigation\NavigationGroup;
 use App\Filament\Resources\AboutResource;
@@ -59,6 +61,13 @@ class AdminPanelProvider extends PanelProvider
             ->profile()
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder->groups([
+                    // Phase 2 — Fluent simulation (cohorts & student applications)
+                    NavigationGroup::make('المحاكاة')
+                        ->items([
+                            ...StudentApplicationResource::getNavigationItems(),
+                            ...CohortResource::getNavigationItems(),
+                        ]),
+
                     NavigationGroup::make('الموظفين')
                         ->items([
                             ...UserResource::getNavigationItems(),
