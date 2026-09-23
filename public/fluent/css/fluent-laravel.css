@@ -82,3 +82,21 @@ a.cinfo-v:hover{color:var(--signal)}
 
 /* The prototype's demo-box icon has no size rule and renders huge; size it like other inline icons */
 .demobox-h svg{width:1rem;height:1rem;flex:none}
+
+/* ============================================================
+   Privacy policy (/privacy) + privacy notes under the forms
+   ============================================================ */
+.legal{max-width:820px;line-height:2;font-size:.97rem;color:#d6d6d5}
+.legal h2{font-size:1.2rem;font-weight:600;color:var(--paper);margin:2.4rem 0 .8rem;line-height:1.5}
+.legal h3{font-size:1rem;font-weight:600;color:var(--paper);margin:1.5rem 0 .5rem}
+.legal p{margin:0 0 1rem}
+.legal ul{margin:0 0 1.1rem;padding-inline-start:1.3rem}
+.legal li{margin-bottom:.4rem}
+.legal a{color:var(--signal)}
+.legal b{color:var(--paper);font-weight:600}
+.legal-meta{color:var(--muted);font-size:.85rem}
+.legal-dev{border:1px dashed rgba(247,200,0,.5);background:rgba(247,200,0,.05);border-radius:12px;padding:1rem 1.2rem;margin-bottom:2rem;font-size:.88rem;color:#f0e2a0}
+.legal-dev b{color:var(--signal)}
+.legal-dev ul{margin:.6rem 0 0}
+.fprivacy{margin-top:1.4rem;font-size:.82rem;line-height:1.8;color:var(--muted)}
+.fprivacy a{color:var(--signal)}
