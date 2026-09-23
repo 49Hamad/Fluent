@@ -12,6 +12,9 @@ use App\Filament\Resources\HeroResource;
 use App\Filament\Resources\CohortResource;
 use App\Filament\Resources\StudentApplicationResource;
 use App\Filament\Resources\BusinessChallengeResource;
+use App\Filament\Resources\EnrollmentResource;
+use App\Filament\Resources\AgreementResource;
+use App\Filament\Resources\PaymentMethodResource;
 use App\Filament\Resources\UserResource;
 use Filament\Navigation\NavigationGroup;
 use App\Filament\Resources\AboutResource;
@@ -69,6 +72,9 @@ class AdminPanelProvider extends PanelProvider
                             ...(StudentApplicationResource::canViewAny() ? StudentApplicationResource::getNavigationItems() : []),
                             ...(CohortResource::canViewAny() ? CohortResource::getNavigationItems() : []),
                             ...(BusinessChallengeResource::canViewAny() ? BusinessChallengeResource::getNavigationItems() : []),
+                            ...(EnrollmentResource::canViewAny() ? EnrollmentResource::getNavigationItems() : []),
+                            ...(AgreementResource::canViewAny() ? AgreementResource::getNavigationItems() : []),
+                            ...(PaymentMethodResource::canViewAny() ? PaymentMethodResource::getNavigationItems() : []),
                         ]),
 
                     NavigationGroup::make('الموظفين')
