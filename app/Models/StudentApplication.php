@@ -6,6 +6,7 @@ use App\Enums\ApplicationStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Storage;
 
 class StudentApplication extends Model
@@ -63,5 +64,36 @@ class StudentApplication extends Model
     public function statusChanges(): HasMany
     {
         return $this->hasMany(StudentApplicationStatusChange::class)->latest('id');
+    }
+
+    /* ---- Seat-confirmation workflow (agreement → payment → seat) ---- */
+
+    public function enrollment(): HasOne
+    {
+        return $this->hasOne(Enrollment::class);
+    }
+
+    public function agreementAcceptance(): HasOne
+    {
+        return $this->hasOne(AgreementAcceptance::class);
+    }
+
+    public function mediaConsents(): HasMany
+    {
+        return $this->hasMany(MediaConsent::class)->latest('id');
+    }
+
+    /** Current media consent = the latest decision (null = not decided yet). */
+    public function latestMediaConsent(): HasOne
+    {
+        return $this->hasOne(MediaConsent::class)->latestOfMany();
+    }
+
+    /** Agreement / payment evidence exists → the application must not be deleted. */
+    public function hasEnrollmentEvidence(): bool
+    {
+        return $this->agreementAcceptance()->exists()
+            || $this->mediaConsents()->exists()
+            || PaymentReceipt::whereHas('enrollment', fn ($q) => $q->where('student_application_id', $this->id))->exists();
     }
 }

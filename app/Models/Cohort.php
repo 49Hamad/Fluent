@@ -12,12 +12,20 @@ class Cohort extends Model
     protected $fillable = [
         'name', 'start_date', 'schedule', 'location',
         'instructions', 'what_to_bring', 'registration_status',
+        'fee_amount', 'fee_currency', 'payment_deadline', 'payment_method_id',
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'registration_status' => RegistrationStatus::class,
+        'fee_amount' => 'decimal:2',
+        'payment_deadline' => 'date',
     ];
+
+    public function paymentMethod(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(PaymentMethod::class);
+    }
 
     public function applications(): HasMany
     {
