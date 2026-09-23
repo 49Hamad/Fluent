@@ -60,6 +60,8 @@ class StudentPortalData
                 'location' => $a->interview_location,
                 'note' => $a->interview_note,
             ] : null,
+            // Seat-confirmation workflow — only for «مقبول مبدئيًا» / «مقبول نهائيًا».
+            'enrollment' => \App\Services\EnrollmentService::visibleFor($a) ? StudentEnrollmentData::for($a) : null,
             // Cohort details — only after FINAL acceptance.
             'cohort' => $status === ApplicationStatus::FinalAccepted && $a->cohort ? [
                 'name' => $a->cohort->name,
