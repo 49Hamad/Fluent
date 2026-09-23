@@ -65,9 +65,9 @@ class AdminPanelProvider extends PanelProvider
                     // Phase 2 — Fluent simulation (cohorts, student applications, company challenges)
                     NavigationGroup::make('المحاكاة')
                         ->items([
-                            ...StudentApplicationResource::getNavigationItems(),
-                            ...CohortResource::getNavigationItems(),
-                            // shown only to employees with the Shield permission
+                            // each item (and its badge) shown only to employees with the Shield permission
+                            ...(StudentApplicationResource::canViewAny() ? StudentApplicationResource::getNavigationItems() : []),
+                            ...(CohortResource::canViewAny() ? CohortResource::getNavigationItems() : []),
                             ...(BusinessChallengeResource::canViewAny() ? BusinessChallengeResource::getNavigationItems() : []),
                         ]),
 
