@@ -38,20 +38,21 @@ window.FLUENT_SCHEMAS = {
 
   /* ==========================================================
      أ) الطلاب والخريجون — سجّل في المحاكاة
+     ----------------------------------------------------------
+     ✅ الأسئلة المعتمدة (المرحلة الثانية). مفاتيح الخيارات يجب
+     أن تطابق app/Support/StudentApplicationForm.php — نفس القيم
+     تُستخدم في التحقق على الخادم وفي عرض Filament.
+
+     showIf  → الحقل يظهر (ويصبح مطلوبًا) فقط إذا تحقّق الشرط:
+               { field:'x', equals:'yes' }  أو  { field:'x', includes:'other' }
      ========================================================== */
   student: {
     key: 'student',
     table: 'student',
     submissionType: 'application',
+    submitLabel: 'إرسال الطلب',
 
-    /* الأعمدة الحقيقية في الجدول. أي حقل آخر يُحفظ تلقائيًا
-       داخل عمود data من نوع jsonb — أي أن إضافة أسئلة جديدة
-       لا تحتاج أي تعديل على قاعدة البيانات. */
-    columns: { full_name:'full_name', email:'email', phone:'phone' },
-
-    /* الخطوات. خطوة واحدة = نموذج عادي بلا مؤشّر.
-       أكثر من خطوة = تجربة متعدّدة الخطوات تلقائيًا. */
-    /* بعد الإرسال ينتقل الطالب إلى مساحته مباشرة */
+    /* بعد الإرسال ينتقل الطالب إلى مساحته */
     portalCta: { href:'/login', label:'ادخل مساحتك' },
     doneTitle: 'وصلنا طلبك.',
     doneText: 'أنشأنا لك مساحة في Fluent تتابع منها حالة طلبك. الدخول إليها بنفس بريدك في أي وقت.',
@@ -59,87 +60,83 @@ window.FLUENT_SCHEMAS = {
     steps: [
       {
         title: 'بياناتك',
-        hint:  'المعلومات الأساسية للتواصل معك',
         fields: [
-          { draft:true, name:'full_name', label:'الاسم الكامل', type:'text', required:true, width:'half', autocomplete:'name', placeholder:'الاسم كما في الهوية' },
-          { draft:true, name:'email', label:'البريد الإلكتروني', type:'email', required:true, width:'half', autocomplete:'email', placeholder:'name@example.com', help:'سنرسل نتيجة الطلب على هذا البريد.' },
-          { draft:true, name:'phone', label:'رقم الجوال', type:'tel', required:true, width:'half', autocomplete:'tel', placeholder:'05XXXXXXXX' },
-          { draft:true, name:'city', label:'المدينة', type:'text', width:'half', autocomplete:'address-level2', placeholder:'الرياض' }
+          { name:'full_name', label:'الاسم الثلاثي', type:'text', required:true, width:'half', autocomplete:'name', maxlength:120 },
+          { name:'email', label:'البريد الإلكتروني', type:'email', required:true, width:'half', autocomplete:'email', placeholder:'name@example.com', maxlength:190 },
+          { name:'phone', label:'رقم الجوال', type:'tel', required:true, width:'half', autocomplete:'tel', placeholder:'05XXXXXXXX' },
+          { name:'gender', label:'الجنس', type:'radio', required:true, inline:true, width:'half', options:[
+              { value:'male',   label:'ذكر' },
+              { value:'female', label:'أنثى' }
+          ]},
+          { name:'city', label:'المدينة', type:'text', required:true, width:'half', autocomplete:'address-level2', maxlength:100 },
+          { name:'university', label:'الجامعة / الجهة التعليمية', type:'text', required:true, width:'half', maxlength:150 },
+          { name:'major', label:'التخصص', type:'text', required:true, width:'half', maxlength:150 },
+          { name:'study_status', label:'الحالة الدراسية', type:'radio', required:true, inline:true, width:'half', options:[
+              { value:'student',  label:'طالب' },
+              { value:'graduate', label:'خريج' }
+          ]},
+          { name:'graduation_year', label:'سنة التخرج المتوقعة أو سنة التخرج', type:'number', required:true, width:'half',
+            min:1980, max:(new Date().getFullYear() + 8), placeholder:'مثال: 2026' }
         ]
       },
       {
-        title: 'خلفيتك',
-        hint:  'حتى نضعك في الفريق والدور المناسبين',
+        title: 'نبي نعرفك أكثر',
         fields: [
-          { draft:true, name:'status', label:'وضعك الحالي', type:'radio', required:true, inline:true, options:[
-              { value:'student',  label:'طالب' },
-              { value:'graduate', label:'خريج' },
-              { value:'other',    label:'غير ذلك' }
+          { name:'motivation', label:'ليش تبي تدخل تجربة Fluent؟', type:'textarea', required:true, maxlength:1500,
+            help:'ما نبحث عن إجابة مثالية، نبي نفهم وش تبي تطلع فيه من التجربة.' },
+          { name:'gaps', label:'وش أكثر شيء تحس ينقصك قبل دخول بيئة العمل؟', type:'checkbox', required:true, options:[
+              { value:'practical_experience',       label:'خبرة عملية' },
+              { value:'teamwork',                   label:'العمل ضمن فريق' },
+              { value:'professional_communication', label:'التواصل المهني' },
+              { value:'real_tasks',                 label:'التعامل مع مهام حقيقية' },
+              { value:'time_management',            label:'إدارة الوقت والالتزام' },
+              { value:'workplace_confidence',       label:'الثقة في بيئة العمل' },
+              { value:'portfolio',                  label:'بناء ملف أعمال' },
+              { value:'other',                      label:'أخرى' }
           ]},
-          { draft:true, name:'major', label:'التخصص', type:'text', width:'half', placeholder:'مثال: نظم المعلومات' },
-          { draft:true, name:'motivation', label:'ليش تبي تشارك في المحاكاة؟', type:'textarea', required:true, maxlength:600, minlength:40, placeholder:'اكتب بصراحة — ما نبحث عن إجابة مثالية.' },
-
-          /* رفع ملف — الملف يُرفع إلى سلة Supabase خاصة، ولا يُحفظ في
-             قاعدة البيانات إلا مساره. bucket = اسم السلة، column = العمود
-             الذي يُخزَّن فيه المسار (اختياري؛ المسار يُحفظ في data دائمًا). */
-          { draft:true, name:'cv', label:'السيرة الذاتية', type:'file', required:true,
-            maxSizeMB:5, bucket:'fluent-cv', column:'cv_path',
+          { name:'gaps_other', label:'اكتب إجابتك', type:'text', required:true, maxlength:150,
+            showIf:{ field:'gaps', includes:'other' } },
+          { name:'has_experience', label:'هل سبق اشتغلت على مشروع حقيقي أو تجربة عملية؟', type:'radio', required:true, inline:true, options:[
+              { value:'yes', label:'نعم' },
+              { value:'no',  label:'لا' }
+          ]},
+          { name:'experience_details', label:'احكِ لنا عنها باختصار', type:'textarea', required:true, maxlength:1500,
+            showIf:{ field:'has_experience', equals:'yes' } },
+          { name:'team_scenario', label:'لو كنت ضمن فريق وعندكم تسليم قريب وأحد أعضاء الفريق ما أنجز الجزء المطلوب منه، وش بتسوي؟',
+            type:'textarea', required:true, maxlength:1500 },
+          { name:'weekly_commitment', label:'كم تقدر تلتزم أسبوعيًا بالتجربة؟', type:'radio', required:true, options:[
+              { value:'lt5',   label:'أقل من 5 ساعات' },
+              { value:'5_10',  label:'5–10 ساعات' },
+              { value:'10_15', label:'10–15 ساعة' },
+              { value:'gt15',  label:'أكثر من 15 ساعة' }
+          ]}
+        ]
+      },
+      {
+        title: 'أخيرًا',
+        fields: [
+          { name:'linkedin_url', label:'رابط LinkedIn', type:'url', width:'half', placeholder:'https://linkedin.com/in/…' },
+          { name:'portfolio_url', label:'رابط Portfolio / Behance / أعمال سابقة', type:'url', width:'half', placeholder:'https://' },
+          { name:'cv', label:'السيرة الذاتية CV', type:'file', required:true, maxSizeMB:5,
             help:'PDF فقط · الحد الأقصى 5 ميجابايت' },
-
-          { draft:true, name:'consent', type:'consent', required:true, label:'أوافق على استخدام بياناتي لغرض تقييم الطلب والتواصل معي بخصوص تجارب Fluent.' }
+          { name:'consent', type:'consent', required:true,
+            label:'أوافق على استخدام بياناتي المقدمة لأغراض دراسة الطلب والتواصل معي بشأن برامج وتجارب Fluent.' }
         ]
       }
     ]
   },
 
   /* ==========================================================
-     ب) قائمة الانتظار — تُستخدم تلقائيًا حين تكون
-        registration.student = 'waitlist'
-        تُحفظ في نفس الجدول بنوع مختلف.
+     ب) وضع «قائمة الانتظار» — نفس النموذج المعتمد بالكامل.
+        يُستخدم تلقائيًا حين تكون حالة الدفعة في Filament «قائمة انتظار».
+        الطلب يُحفظ بحالة «تم الاستلام» ويُعلَّم أنه وصل أثناء قائمة الانتظار.
+        (لا يوجد نموذج «نبّهني عند فتح التسجيل» في هذه المرحلة.)
      ========================================================== */
-  studentWaitlist: {
-    key: 'student',
-    table: 'student',
-    submissionType: 'waitlist',
-    columns: { full_name:'full_name', email:'email', phone:'phone' },
-    steps: [
-      {
-        fields: [
-          { name:'full_name', label:'الاسم الكامل', type:'text', required:true, width:'half', autocomplete:'name' },
-          { name:'email', label:'البريد الإلكتروني', type:'email', required:true, width:'half', autocomplete:'email', placeholder:'name@example.com' },
-          { name:'phone', label:'رقم الجوال', type:'tel', required:true, width:'full', autocomplete:'tel', placeholder:'05XXXXXXXX' },
-          { name:'consent', type:'consent', required:true, label:'أوافق على أن تراسلني Fluent عند فتح التسجيل القادم.' }
-        ]
-      }
-    ],
-    submitLabel: 'أضفني لقائمة الانتظار',
-    doneTitle: 'تم تسجيلك في قائمة الانتظار.',
-    doneText: 'أول ما نفتح الدورة القادمة، ستصلك رسالة قبل الإعلان العام.'
-  },
-
-  /* ==========================================================
-     ب-٢) نموذج التنبيه — يُستخدم تلقائيًا حين تكون
-        registration.student = 'closed'
-        يظهر بعد ضغط زر «نبّهني عند فتح التسجيل».
-        يُحفظ في نفس الجدول بـ submission_type = 'notification'.
-     ========================================================== */
-  studentNotify: {
-    key: 'student',
-    table: 'student',
-    submissionType: 'notification',
-    columns: { full_name:'full_name', email:'email', phone:'phone' },
-    steps: [
-      {
-        fields: [
-          { name:'full_name', label:'الاسم', type:'text', required:true, width:'half', autocomplete:'name' },
-          { name:'email', label:'البريد الإلكتروني', type:'email', required:true, width:'half', autocomplete:'email', placeholder:'name@example.com' },
-          { name:'phone', label:'رقم الجوال', type:'tel', required:true, width:'full', autocomplete:'tel', placeholder:'05XXXXXXXX' }
-        ]
-      }
-    ],
-    submitLabel: 'نبّهوني',
-    doneTitle: 'سجّلنا تنبيهك.',
-    doneText: 'أول ما يُفتح التسجيل على الدورة القادمة، تصلك رسالة على بريدك.'
+  get studentWaitlist() {
+    var s = Object.assign({}, this.student);
+    s.doneTitle = 'وصلنا طلبك.';
+    s.doneText = 'مقاعد هذه الدفعة شبه مكتملة، وطلبك الآن على قائمة الانتظار. سنراجعه ونراسلك على بريدك بأي تحديث.';
+    return s;
   },
 
   /* ==========================================================

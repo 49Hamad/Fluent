@@ -1,4 +1,14 @@
 /* ============================================================
+   Fluent form engine — from the approved prototype (assets/js/fluent-forms.js).
+   Laravel additions (Phase 2), marked «Laravel» below:
+     1) conditional questions: field.showIf  { field, equals } | { field, includes }
+        — hidden questions are neither validated nor sent
+     2) CFG.endpoint.mode = 'laravel' → one multipart POST (answers + CV) to
+        Laravel, which validates again, stores and returns the reference.
+        Server field errors are shown in place on the right step.
+   The look, steps, messages and confirmation screen are unchanged.
+   ============================================================ */
+/* ============================================================
    FLUENT — محرّك النماذج
    ------------------------------------------------------------
    JavaScript خالص، بلا مكتبات وبلا CDN وبلا عملية بناء.
@@ -107,6 +117,12 @@
   /* هل نحن في وضع المعاينة؟ لا يحتاج Supabase إطلاقًا. */
   function isPreview() {
     return CFG.previewMode === true || !isConfigured();
+  }
+
+  /* «Laravel»: real submission to the Laravel endpoint */
+  function isLaravel() {
+    var ep = CFG.endpoint || {};
+    return CFG.previewMode !== true && ep.mode === 'laravel' && !!ep.url;
   }
 
   function makeReference() {
@@ -499,6 +515,7 @@
   }
 
   function validate(item) {
+    if (item.off) return '';   /* «Laravel»: hidden conditional question */
     var f = item.field, v = readValue(item);
 
     if (f.type === 'file') {
@@ -679,6 +696,36 @@
       form.appendChild(panel);
     });
 
+    /* ---------- «Laravel» الأسئلة الشرطية (showIf) ---------- */
+    function byName(n) {
+      for (var i = 0; i < items.length; i++) if (items[i].field.name === n) return items[i];
+      return null;
+    }
+    function stepOf(it) {
+      for (var i = 0; i < stepItems.length; i++) if (stepItems[i].indexOf(it) > -1) return i;
+      return 0;
+    }
+    function applyConditions() {
+      items.forEach(function (it) {
+        var c = it.field.showIf;
+        if (!c) return;
+        var src = byName(c.field);
+        var v = src ? readValue(src) : '';
+        var on = c.includes != null
+          ? (Array.isArray(v) && v.indexOf(c.includes) > -1)
+          : (v === c.equals);
+        it.off = !on;
+        it.wrap.hidden = !on;
+        if (!on) paint(it, '');
+      });
+    }
+    items.forEach(function (it) {
+      if (!it.field.showIf) return;
+      var src = byName(it.field.showIf.field);
+      if (src) src.control.addEventListener('change', applyConditions);
+    });
+    applyConditions();
+
     /* مصيدة السبام */
     var hp = el('div', 'fhp');
     hp.setAttribute('aria-hidden', 'true');
@@ -858,6 +905,8 @@
       nextBtn.setAttribute('aria-busy', 'true');
       backBtn.disabled = true;
 
+      if (isLaravel()) { submitLaravel(); return; }   /* «Laravel» */
+
       var row = buildRow();
       var label = nextBtn.querySelector('.btn-label');
       var originalLabel = label.textContent;
@@ -916,6 +965,78 @@
           }
         });
     });
+
+    /* ---------- «Laravel» الإرسال الحقيقي إلى Laravel ---------- */
+    function submitLaravel() {
+      var ep = CFG.endpoint || {};
+      var label = nextBtn.querySelector('.btn-label');
+      var original = label.textContent;
+      var fd = new FormData();
+      var hasFile = false;
+
+      items.forEach(function (it) {
+        if (it.off) return;
+        var n = it.field.name, v = readValue(it);
+        if (it.field.type === 'file') { if (v) { fd.append(n, v, v.name); hasFile = true; } return; }
+        if (it.field.type === 'consent') { if (v) fd.append(n, '1'); return; }
+        if (Array.isArray(v)) { v.forEach(function (x) { fd.append(n + '[]', x); }); return; }
+        if (v !== '' && v != null) fd.append(n, v);
+      });
+      var trap = form.querySelector('[name="fl_website"]');
+      fd.append('fl_website', trap ? trap.value : '');
+      var extra = ep.extra || {};
+      Object.keys(extra).forEach(function (k) { fd.append(k, extra[k]); });
+
+      label.textContent = hasFile ? 'جارٍ رفع الملف…' : 'جارٍ الإرسال…';
+
+      function reset() {
+        nextBtn.removeAttribute('data-loading');
+        nextBtn.removeAttribute('aria-busy');
+        backBtn.disabled = false;
+        label.textContent = original;
+      }
+      var mail = esc(CFG.contactEmail || 'info@fluent.sa');
+      var mailLink = '<a href="mailto:' + mail + '" dir="ltr">' + mail + '</a>';
+
+      fetch(ep.url, {
+        method: 'POST',
+        body: fd,
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': ep.csrf || '', 'X-Requested-With': 'XMLHttpRequest' }
+      })
+        .then(function (r) {
+          return r.json().catch(function () { return {}; }).then(function (body) { return { status: r.status, body: body }; });
+        })
+        .then(function (res) {
+          if (res.status === 201 && res.body.reference) { showDone(res.body.reference); return; }
+          reset();
+          if (res.status === 422 && res.body.errors) {
+            var first = null;
+            Object.keys(res.body.errors).forEach(function (name) {
+              var it = byName(name);
+              if (!it) return;
+              paint(it, res.body.errors[name]);
+              var st = stepOf(it);
+              if (first === null || st < first) first = st;
+            });
+            if (first !== null && first !== stepIndex) { stepIndex = first; renderNav(); }
+            showAlert('تحقّق من الحقول المطلوبة.', ' صحّح الحقول المعلَّمة ثم أعد الإرسال.', true);
+            return;
+          }
+          if (res.status === 409) {
+            showAlert('التسجيل مغلق حاليًا.', ' أُغلق التسجيل على هذه الدفعة. حدّث الصفحة لمعرفة الحالة الحالية.', false);
+            return;
+          }
+          if (res.status === 429) { showAlert('محاولات كثيرة.', ' انتظر دقيقة ثم أعد المحاولة.', true); return; }
+          if (res.status === 419) { showAlert('انتهت صلاحية الصفحة.', ' حدّث الصفحة ثم أعد الإرسال.', true); return; }
+          throw new Error('HTTP ' + res.status);
+        })
+        .catch(function (err) {
+          console.error('[Fluent] فشل الإرسال:', err);
+          reset();
+          showAlert('ما وصل الطلب.', ' تحقّق من الاتصال وأعد المحاولة. إذا تكرّرت المشكلة راسلنا على ' + mailLink + '.', true);
+        });
+    }
 
     renderNav();
     return { form: form, items: items };
