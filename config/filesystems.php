@@ -37,6 +37,16 @@ return [
             'throw' => false,
         ],
 
+        // Private files of the Fluent application workflow (student CVs).
+        // Not web-accessible and not served; downloads go through Filament
+        // for authorised employees only. File names are random.
+        'applications' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/applications'),
+            'serve' => false,
+            'throw' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
