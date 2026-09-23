@@ -4,12 +4,9 @@
    👈 هذا هو الملف الوحيد الذي تُعدَّل فيه أسئلة النماذج.
    لا تحتاج لمس HTML ولا CSS ولا محرّك النموذج.
 
-   ⚠️⚠️ تنبيه مهم ⚠️⚠️
-   الحقول الموجودة الآن **مبدئية (placeholders)** وُضعت فقط
-   لتشغيل الواجهة وعرض التجربة. كل حقل مبدئي مُعلَّم بـ:
-        draft: true
-   عند وصول الأسئلة المعتمدة: احذف الحقول المبدئية، اكتب الحقول
-   النهائية بنفس الصيغة، واحذف draft.
+   ✅ أسئلة «سجّل في المحاكاة» و«شاركنا تحديًا» معتمدة ومربوطة بـ Laravel.
+   أي تغيير في مفتاح (name / value) يجب أن يُعدَّل معه ملف الخادم
+   المقابل (app/Support/StudentApplicationForm.php أو BusinessChallengeForm.php).
 
    ------------------------------------------------------------
    صيغة الحقل:
@@ -141,56 +138,79 @@ window.FLUENT_SCHEMAS = {
 
   /* ==========================================================
      ج) الشركات والجهات — شاركنا تحديًا
+     ----------------------------------------------------------
+     ✅ الأسئلة المعتمدة (المرحلة الثانية). مفاتيح الخيارات يجب
+     أن تطابق app/Support/BusinessChallengeForm.php — نفس القيم
+     تُستخدم في التحقق على الخادم وفي عرض Filament.
+     عن قصد: لا يوجد سؤال «ما الحل الذي تريده؟» ولا «عنوان للتحدي».
      ========================================================== */
   challenge: {
     key: 'challenge',
     table: 'challenge',
     submissionType: 'challenge',
-    columns: { org_name:'org_name', contact_name:'contact_name', email:'email', phone:'phone' },
 
     steps: [
       {
-        title: 'الجهة',
+        title: 'عن الجهة',
         hint:  'من أنتم وكيف نتواصل معكم',
         fields: [
-          { draft:true, name:'org_name', label:'اسم الجهة', type:'text', required:true, width:'half', autocomplete:'organization', placeholder:'الاسم الرسمي للجهة' },
-          { draft:true, name:'org_type', label:'نوع الجهة', type:'select', required:true, width:'half', options:[
-              { value:'company',  label:'شركة' },
-              { value:'startup',  label:'شركة ناشئة' },
-              { value:'nonprofit',label:'جهة غير ربحية' },
-              { value:'gov',      label:'جهة حكومية' },
-              { value:'edu',      label:'جهة تعليمية' },
-              { value:'other',    label:'أخرى' }
+          { name:'org_name', label:'اسم الجهة', type:'text', required:true, width:'half', autocomplete:'organization', maxlength:150 },
+          { name:'org_type', label:'نوع الجهة', type:'select', required:true, width:'half', options:[
+              { value:'company',    label:'شركة' },
+              { value:'government', label:'جهة حكومية' },
+              { value:'nonprofit',  label:'جهة غير ربحية' },
+              { value:'startup',    label:'مشروع ناشئ' },
+              { value:'other',      label:'أخرى' }
           ]},
-          { draft:true, name:'contact_name', label:'اسم مسؤول التواصل', type:'text', required:true, width:'half', autocomplete:'name' },
-          { draft:true, name:'job_title', label:'المسمى الوظيفي', type:'text', width:'half', autocomplete:'organization-title' },
-          { draft:true, name:'email', label:'البريد الإلكتروني', type:'email', required:true, width:'half', autocomplete:'email', placeholder:'name@company.com' },
-          { draft:true, name:'phone', label:'رقم التواصل', type:'tel', width:'half', autocomplete:'tel', placeholder:'05XXXXXXXX' },
-          { draft:true, name:'website', label:'الموقع الإلكتروني', type:'url', width:'full', placeholder:'https://example.com' }
+          { name:'org_type_other', label:'وضّح نوع الجهة', type:'text', required:true, width:'full', maxlength:150,
+            showIf:{ field:'org_type', equals:'other' } },
+          { name:'sector', label:'القطاع', type:'text', required:true, width:'half', maxlength:150 },
+          { name:'contact_name', label:'اسم مسؤول التواصل', type:'text', required:true, width:'half', autocomplete:'name', maxlength:120 },
+          { name:'job_title', label:'المسمى الوظيفي', type:'text', width:'half', autocomplete:'organization-title', maxlength:120 },
+          { name:'email', label:'البريد الإلكتروني', type:'email', required:true, width:'half', autocomplete:'email', placeholder:'name@company.com', maxlength:190 },
+          { name:'phone', label:'رقم الجوال', type:'tel', required:true, width:'half', autocomplete:'tel', placeholder:'05XXXXXXXX' }
         ]
       },
       {
-        title: 'التحدي',
-        hint:  'المشكلة أو المشروع الذي يعمل عليه المشاركون',
+        title: 'عن التحدي',
+        hint:  'المشكلة كما هي — الحلول يعمل عليها المشاركون',
         fields: [
-          { draft:true, name:'challenge_title', label:'عنوان مختصر للتحدي', type:'text', required:true, maxlength:90, placeholder:'جملة واحدة تلخّص التحدي' },
-          { draft:true, name:'challenge_desc', label:'اشرح التحدي', type:'textarea', required:true, minlength:60, maxlength:1200, help:'ما المشكلة؟ ولماذا هي مهمة لكم الآن؟', placeholder:'اكتب التحدي كما تشرحه لموظف جديد في فريقكم.' },
-          { draft:true, name:'expected_output', label:'ما المخرج المفيد لكم؟', type:'textarea', maxlength:600, placeholder:'مثال: تصوّر مبدئي، دراسة، مقترح حل، نموذج أولي…' },
-
-          /* اختياري — لا يُشترط وجود ملف تعريفي لإرسال التحدي */
-          { draft:true, name:'org_profile', label:'الملف التعريفي للجهة', type:'file',
-            maxSizeMB:10, bucket:'fluent-profiles', column:'profile_path',
-            help:'اختياري · PDF فقط · الحد الأقصى 10 ميجابايت' },
-          { draft:true, name:'confidential', type:'consent', label:'التحدي يتضمّن معلومات حسّاسة وأرغب في مناقشة حدود المشاركة قبل الاعتماد.' },
-          { draft:true, name:'consent', type:'consent', required:true, label:'أوافق على مراجعة Fluent لهذا الطلب والتواصل معنا بشأنه.' }
+          { name:'challenge_description', label:'وش التحدي اللي تواجهه الجهة؟', type:'textarea', required:true, maxlength:3000,
+            help:'صف لنا المشكلة كما هي، ما نحتاج منك تقترح الحل.' },
+          { name:'affected_parties', label:'مين يتأثر بهذا التحدي؟', type:'textarea', required:true, maxlength:1500,
+            help:'مثال: العملاء، الموظفون، المستفيدون، أو فريق معين داخل الجهة.' },
+          { name:'current_impact', label:'وش الأثر الحالي للمشكلة على الجهة؟', type:'textarea', required:true, maxlength:1500 },
+          { name:'expected_outputs', label:'وش تتوقعون من المشاركين في نهاية المحاكاة؟', type:'checkbox', required:true, options:[
+              { value:'ideas',           label:'أفكار وحلول' },
+              { value:'research',        label:'بحث وتحليل' },
+              { value:'prototype',       label:'نموذج أولي' },
+              { value:'experience',      label:'تحسين تجربة أو رحلة' },
+              { value:'recommendations', label:'توصيات عملية' },
+              { value:'other',           label:'أخرى' }
+          ]},
+          { name:'expected_outputs_other', label:'اكتب إجابتك', type:'text', required:true, maxlength:150,
+            showIf:{ field:'expected_outputs', includes:'other' } },
+          { name:'can_share_materials', label:'هل تستطيعون مشاركة معلومات أو مواد تساعد المشاركين على فهم التحدي؟', type:'radio', required:true, inline:true, options:[
+              { value:'yes', label:'نعم' },
+              { value:'no',  label:'لا' }
+          ]},
+          { name:'has_confidential_info', label:'هل توجد معلومات سرية أو قيود لازم نعرفها قبل عرض التحدي على المشاركين؟', type:'radio', required:true, inline:true, options:[
+              { value:'yes', label:'نعم' },
+              { value:'no',  label:'لا' }
+          ]},
+          { name:'confidential_details', label:'وضح لنا المعلومات السرية أو القيود التي يجب مراعاتها', type:'textarea', required:true, maxlength:2000,
+            showIf:{ field:'has_confidential_info', equals:'yes' } },
+          { name:'challenge_file', label:'ملف عن التحدي أو الجهة', type:'file', maxSizeMB:5,
+            help:'اختياري · PDF فقط · الحد الأقصى 5 ميجابايت' },
+          { name:'consent', type:'consent', required:true,
+            label:'أوافق على استخدام المعلومات المقدمة لغرض دراسة التحدي وتقييم ملاءمته للمحاكاة المهنية والتواصل معي بشأنه.' }
         ]
       }
     ],
-    submitLabel: 'أرسل التحدي',
+    submitLabel: 'إرسال التحدي',
     doneTitle: 'وصلنا تحديكم.',
     doneText: 'يراجع فريق Fluent التحدي ويعود لكم خلال أيام عمل قليلة لمناقشة إمكانية إدراجه ضمن محاكاة قادمة.'
-  }
-,
+  },
 
   /* ==========================================================
      ج-٢) تنبيه للجهات — يُستخدم إذا أُغلق مسار التحديات يومًا
