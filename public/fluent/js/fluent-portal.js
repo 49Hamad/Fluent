@@ -1,6 +1,11 @@
 /* ============================================================
-   Copied from the approved prototype (assets/js/fluent-portal.js).
-   Only change: prototype page links (*.html) → Laravel routes.
+   From the approved prototype (assets/js/fluent-portal.js). Changes (Phase 2):
+     - page links (*.html) → Laravel routes
+     - the 7 real statuses (مقبول مبدئيًا / مقبول نهائيًا instead of «مقبول»)
+     - interview details shown to the student when invited to an interview
+     - text is HTML-escaped before display (the prototype did not escape;
+       required now that the data is real)
+     - several applications (future): a small switcher; one → opens directly
    ------------------------------------------------------------
    FLUENT — بوابة الطالب «مساحتي في Fluent»
    ------------------------------------------------------------
@@ -41,7 +46,11 @@
     }
   }
 
-  function esc(v) { return String(v == null ? '' : v); }
+  function esc(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
 
   function fmtDate(iso) {
     if (!iso) return '—';
@@ -80,7 +89,7 @@
     });
 
     /* الحالات النهائية: المسار مكتمل والنتيجة تُعرض تحته */
-    var terminal = ['accepted', 'rejected', 'waitlist'].indexOf(status) > -1;
+    var terminal = ['preliminary_accepted', 'final_accepted', 'rejected', 'waitlist'].indexOf(status) > -1;
     var idx = FluentStore.TRACK.indexOf(status);
 
     var html = '<div class="track"><span class="kicker">مسار الطلب</span><div class="track-steps">';
@@ -105,9 +114,14 @@
 
   /* نصوص النتيجة — الرفض مصاغ باحترام وبلا لون قاسٍ */
   function outcome(status) {
-    if (status === 'accepted') {
-      return '<div class="outcome t-good"><b>مقبول</b>' +
+    if (status === 'final_accepted') {
+      return '<div class="outcome t-good"><b>مقبول نهائيًا</b>' +
         'تفاصيل التجربة في الأعلى. نراك قريبًا.</div>';
+    }
+    if (status === 'preliminary_accepted') {
+      /* Later: agreement / payment / seat confirmation will appear here. */
+      return '<div class="outcome t-good"><b>مقبول مبدئيًا</b>' +
+        'يسعدنا إبلاغك بقبولك مبدئيًا في تجربة Fluent. سنتواصل معك على بريدك بالخطوة التالية قبل تأكيد مقعدك.</div>';
     }
     if (status === 'waitlist') {
       return '<div class="outcome t-hold"><b>على قائمة الانتظار</b>' +
@@ -120,8 +134,26 @@
         'والاختيار مرتبط بطبيعة تحديات كل دفعة. نرحّب بطلبك في الدفعات القادمة.</div>';
     }
     if (status === 'interview') {
-      return '<div class="outcome"><b>مرشح للمقابلة</b>' +
-        'وصلك ترشيح لمقابلة قصيرة. سنراسلك على بريدك لتحديد الموعد.</div>';
+      var iv = (app && app.interview) || {};
+      var rows = [];
+      if (iv.at)       rows.push(['الموعد', iv.at, '']);   /* already formatted by the server */
+      if (iv.mode)     rows.push(['نوع المقابلة', iv.mode, '']);
+      if (iv.location) rows.push(['المكان / الرابط', iv.location, /^https?:\/\//i.test(iv.location) ? 'link' : '']);
+      if (!rows.length && !iv.note) {
+        return '<div class="outcome"><b>مرشح للمقابلة</b>' +
+          'وصلك ترشيح لمقابلة قصيرة. سنراسلك على بريدك لتحديد الموعد.</div>';
+      }
+      var h = '<div class="outcome"><b>مرشح للمقابلة</b>تفاصيل مقابلتك:' +
+        '<dl class="dl" style="margin-top:.9rem">';
+      rows.forEach(function (r) {
+        var v = r[2] === 'link'
+          ? '<a href="' + esc(r[1]) + '" target="_blank" rel="noopener" dir="ltr" style="color:var(--signal)">' + esc(r[1]) + '</a>'
+          : esc(r[1]);
+        h += '<div><dt>' + esc(r[0]) + '</dt><dd>' + v + '</dd></div>';
+      });
+      h += '</dl>';
+      if (iv.note) h += '<p style="margin-top:.8rem">' + esc(iv.note) + '</p>';
+      return h + '</div>';
     }
     if (status === 'review') {
       return '<div class="outcome"><b>قيد المراجعة</b>' +
@@ -183,7 +215,20 @@
         '<p>هذه مساحتك في Fluent. تتابع منها حالة طلبك وتفاصيل تجربتك.</p>' +
       '</div>';
 
-    if (app.status === 'accepted') html += acceptance(settings.cohort);
+    var list = (FluentStore.applications && FluentStore.applications()) || [];
+    if (list.length > 1) {
+      /* Several applications (future cohorts): open the relevant one. */
+      html += '<ul class="chips" style="margin:-.6rem 0 1.6rem" aria-label="تجاربي في Fluent">';
+      list.forEach(function (x) {
+        var on = x.reference === app.reference;
+        html += '<li><a class="chip" href="?application=' + encodeURIComponent(x.reference) + '"' +
+          (on ? ' aria-current="true" style="border-color:var(--signal);color:var(--paper)"' : '') + '>' +
+          esc(x.cohort || x.reference) + '</a></li>';
+      });
+      html += '</ul>';
+    }
+
+    if (app.status === 'final_accepted') html += acceptance(settings.cohort);
 
     html +=
       '<div class="portal-grid">' +
