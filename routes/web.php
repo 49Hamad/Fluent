@@ -24,7 +24,7 @@ Route::get('/feedback-form/{id}',FormFeedBack::class)->name('feedback_form');
 */
 Route::get('/apply', [FluentFrontendController::class, 'apply'])->name('fluent.apply');
 Route::post('/apply', [StudentApplicationController::class, 'store'])
-    ->middleware('throttle:6,1')   // max 6 submissions per minute per visitor
+    ->middleware('throttle:apply-submit')   // per applicant e-mail + a generous per-network ceiling (AppServiceProvider)
     ->name('fluent.apply.store');
 
 /*
@@ -36,9 +36,9 @@ Route::post('/apply', [StudentApplicationController::class, 'store'])
 */
 Route::get('/login', [StudentAuthController::class, 'show'])->name('fluent.login');
 Route::post('/login/code', [StudentAuthController::class, 'requestCode'])
-    ->middleware('throttle:20,1')->name('fluent.login.code');
+    ->middleware('throttle:login-code')->name('fluent.login.code');
 Route::post('/login/verify', [StudentAuthController::class, 'verify'])
-    ->middleware('throttle:30,1')->name('fluent.login.verify');
+    ->middleware('throttle:login-verify')->name('fluent.login.verify');
 
 Route::middleware(EnsureStudentIsAuthenticated::class)->group(function () {
     Route::get('/portal', [StudentPortalController::class, 'show'])->name('fluent.portal');
