@@ -5,18 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Cohort;
 
 /**
- * Redesign — new public screens.
+ * Redesign — new public screens (all LIVE since Phase 2).
  *
- * LIVE (Phase 2): the student application page (real submission, see
- * StudentApplicationController), driven by the cohort whose registration
- * is open / waitlist in Filament → الدفعات.
- *
- * LIVE: student sign-in + portal → StudentAuthController / StudentPortalController.
- *
- * Still FRONTEND REVIEW MODE: the business challenge page only — it
- * validates locally and shows the confirmation screen, but sends / uploads /
- * stores NOTHING. It answers 404 when config('fluent.frontend_preview') is
- * false (the default in production). Its real workflow comes in a later phase.
+ *  - Student application page → submissions: StudentApplicationController,
+ *    driven by the cohort that is open / waitlist in Filament → الدفعات.
+ *  - «شاركنا تحديًا» page      → submissions: BusinessChallengeController,
+ *    managed in Filament → تحديات الشركات.
+ *  - Student sign-in + portal → StudentAuthController / StudentPortalController.
  */
 class FluentFrontendController extends Controller
 {
@@ -31,15 +26,9 @@ class FluentFrontendController extends Controller
         ]);
     }
 
+    /** Real «شاركنا تحديًا» page. */
     public function challenge()
     {
-        return $this->reviewView('fluent.pages.challenge');
-    }
-
-    private function reviewView(string $view)
-    {
-        abort_unless(config('fluent.frontend_preview'), 404);
-
-        return view($view);
+        return view('fluent.pages.challenge');
     }
 }
