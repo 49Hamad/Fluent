@@ -9,6 +9,7 @@
       $formEndpoint  POST URL for the live mode
       $formExtra     extra fields sent with the form (e.g. cohort_id)
       $studentRegistration  open | waitlist | closed  (from Filament → الدفعات)
+      $openBadge     text of the "open" badge above the form (default: التسجيل مفتوح الآن)
 --}}
 @php
     $cfgEmail = \App\Support\FluentContact::email();
@@ -17,6 +18,7 @@
         ? ['mode' => 'laravel', 'url' => $formEndpoint ?? '', 'csrf' => csrf_token(), 'extra' => (object) ($formExtra ?? [])]
         : ['mode' => 'none'];
     $cfgStudentReg = $studentRegistration ?? 'open';
+    $cfgOpenBadge = $openBadge ?? 'التسجيل مفتوح الآن';
 @endphp
 <script>
 window.FLUENT_CONFIG = {
@@ -25,7 +27,7 @@ window.FLUENT_CONFIG = {
   tables: { student: 'student', challenge: 'challenge' },
   registration: { student: @json($cfgStudentReg), challenge: 'open' },
   registrationCopy: {
-    open:     { badge: 'التسجيل مفتوح الآن' },
+    open:     { badge: @json($cfgOpenBadge) },
     waitlist: {
       badge: 'التسجيل مغلق — قائمة الانتظار مفتوحة',
       cardTitle: 'قائمة الانتظار',
