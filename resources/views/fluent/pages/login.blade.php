@@ -1,11 +1,8 @@
 {{--
-    Student login — approved prototype UI (login.html in fluent-site-updated.zip).
-    Markup copied from the prototype; page links are Laravel routes.
-
-    FRONTEND REVIEW MODE: no authentication. The prototype's demo login
-    (any code accepted, session in localStorage) is NOT migrated, and this
-    screen is not connected to employee / Filament accounts. Trying to sign
-    in shows a subtle development-only notice (see fluent-login.js).
+    Student sign-in — approved prototype UI (login.html in fluent-site-updated.zip).
+    LIVE (Phase 2): e-mail → 6-digit code sent by e-mail → «مساحتي في Fluent».
+    See StudentAuthController / StudentLoginService. Separate "student" guard:
+    not connected to employee / Filament accounts. No passwords, no localStorage.
 --}}
 <x-layouts.fluent :title="'تسجيل الدخول — Fluent'" :noindex="true" :chrome="false" :site-script="false" :app-css="true">
 <main class="authwrap">
@@ -30,7 +27,13 @@
 </main>
 
 @push('scripts')
-  @include('fluent.partials.preview-config')
-  <script src="{{ asset('fluent/js/fluent-login.js') }}"></script>
+  <script>
+    window.FLUENT_LOGIN = {
+      codeUrl: @json(route('fluent.login.code')),
+      verifyUrl: @json(route('fluent.login.verify')),
+      csrf: @json(csrf_token())
+    };
+  </script>
+  <script src="{{ asset('fluent/js/fluent-login.js') }}?v={{ @filemtime(public_path('fluent/js/fluent-login.js')) }}"></script>
 @endpush
 </x-layouts.fluent>
