@@ -21,7 +21,8 @@
 
     <p class="authfoot">
       ما عندك حساب بعد؟ <a href="{{ route('fluent.apply') }}">سجّل في المحاكاة</a><br>
-      <span class="tiny">جهة أو شركة؟ <a href="{{ route('fluent.challenge') }}">شاركنا تحديًا</a></span>
+      <span class="tiny">جهة أو شركة؟ <a href="{{ route('fluent.challenge') }}">شاركنا تحديًا</a></span><br>
+      <span class="tiny"><a href="{{ route('fluent.privacy') }}">سياسة الخصوصية</a></span>
     </p>
   </div>
 </main>

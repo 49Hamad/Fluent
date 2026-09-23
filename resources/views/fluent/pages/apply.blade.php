@@ -41,6 +41,7 @@
       <h2 id="form-h" class="d3" style="margin-bottom:1.6rem">بيانات التسجيل</h2>
       <!-- يبنيه محرّك النماذج من assets/js/fluent-schemas.js -->
       <div id="fluent-form"></div>
+      <p class="fprivacy">تُستخدم بياناتك لدراسة طلبك والتواصل معك بشأنه، وفق <a href="{{ route('fluent.privacy') }}" target="_blank" rel="noopener">سياسة الخصوصية</a>.</p>
       <noscript>
         <p class="fhelp">هذا النموذج يحتاج تفعيل JavaScript. إن تعذّر ذلك راسلنا مباشرة على
           <a href="mailto:{{ $contactEmail }}" dir="ltr" style="color:var(--signal)">{{ $contactEmail }}</a>.</p>

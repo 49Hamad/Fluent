@@ -3,8 +3,13 @@
     Only for a signed-in student (EnsureStudentIsAuthenticated). The data comes
     from StudentPortalController@data, built by App\Support\StudentPortalData
     (strict allow-list: no internal notes, no CV path, no history, no Filament data).
+    Seat-confirmation steps (agreement → media consent → bank transfer → receipt)
+    post to StudentEnrollmentController; data from App\Support\StudentEnrollmentData.
 --}}
 <x-layouts.fluent :title="'مساحتي في Fluent'" :noindex="true" :chrome="false" :site-script="false" :app-css="true">
+@push('head')
+  <link rel="stylesheet" href="{{ asset('fluent/css/fluent-enroll.css') }}?v={{ @filemtime(public_path('fluent/css/fluent-enroll.css')) }}">
+@endpush
 <div class="app">
   <div class="demobar" id="demobar" hidden></div>
 
@@ -39,6 +44,10 @@
       logoutUrl: @json(route('fluent.logout')),
       loginUrl: @json(route('fluent.login')),
       csrf: @json(csrf_token()),
+      agreementUrl: @json(route('fluent.portal.agreement')),
+      mediaUrl: @json(route('fluent.portal.media')),
+      receiptUrl: @json(route('fluent.portal.receipt')),
+      receiptDownloadUrl: @json(url('/portal/receipts')),
       application: @json(request()->query('application')),
       studentName: @json(auth('student')->user()?->full_name)
     };
