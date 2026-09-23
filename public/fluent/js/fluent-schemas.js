@@ -52,8 +52,8 @@ window.FLUENT_SCHEMAS = {
     submissionType: 'application',
     submitLabel: 'إرسال الطلب',
 
-    /* بعد الإرسال ينتقل الطالب إلى مساحته */
-    portalCta: { href:'/login', label:'ادخل مساحتك' },
+    /* زر «ادخل مساحتك» مخفي مؤقتًا حتى يصبح دخول الطالب ومساحته حقيقيين.
+       لإعادته: portalCta: { href:'/login', label:'ادخل مساحتك' }, */
     doneTitle: 'وصلنا طلبك.',
     doneText: 'أنشأنا لك مساحة في Fluent تتابع منها حالة طلبك. الدخول إليها بنفس بريدك في أي وقت.',
 
