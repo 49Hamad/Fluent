@@ -5,6 +5,7 @@ use App\Http\Controllers\BusinessChallengeController;
 use App\Http\Controllers\FluentFrontendController;
 use App\Http\Controllers\StudentApplicationController;
 use App\Http\Controllers\StudentAuthController;
+use App\Http\Controllers\StudentEnrollmentController;
 use App\Http\Controllers\StudentPortalController;
 use App\Http\Middleware\EnsureStudentIsAuthenticated;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,17 @@ Route::middleware(EnsureStudentIsAuthenticated::class)->group(function () {
     Route::get('/portal', [StudentPortalController::class, 'show'])->name('fluent.portal');
     Route::get('/portal/data', [StudentPortalController::class, 'data'])->name('fluent.portal.data');
     Route::post('/portal/logout', [StudentAuthController::class, 'logout'])->name('fluent.logout');
+
+    // Seat-confirmation workflow (agreement → media consent → receipt). Own application only.
+    // Named rate limits per signed-in student (AppServiceProvider).
+    Route::post('/portal/agreement', [StudentEnrollmentController::class, 'acceptAgreement'])
+        ->middleware('throttle:portal-action')->name('fluent.portal.agreement');
+    Route::post('/portal/media-consent', [StudentEnrollmentController::class, 'mediaConsent'])
+        ->middleware('throttle:portal-action')->name('fluent.portal.media');
+    Route::post('/portal/receipt', [StudentEnrollmentController::class, 'uploadReceipt'])
+        ->middleware('throttle:portal-receipt')->name('fluent.portal.receipt');
+    Route::get('/portal/receipts/{uuid}', [StudentEnrollmentController::class, 'downloadReceipt'])
+        ->middleware('throttle:portal-download')->name('fluent.portal.receipt.download');
 });
 
 /*
@@ -54,6 +66,9 @@ Route::middleware(EnsureStudentIsAuthenticated::class)->group(function () {
 | Rate limit "challenge-submit" (AppServiceProvider): 5/minute, 20/day per visitor.
 */
 Route::get('/challenge', [FluentFrontendController::class, 'challenge'])->name('fluent.challenge');
+
+// Public privacy policy (سياسة الخصوصية)
+Route::view('/privacy', 'fluent.pages.privacy')->name('fluent.privacy');
 Route::post('/challenge', [BusinessChallengeController::class, 'store'])
     ->middleware('throttle:challenge-submit')
     ->name('fluent.challenge.store');
