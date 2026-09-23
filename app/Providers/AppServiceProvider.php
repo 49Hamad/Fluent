@@ -33,5 +33,14 @@ class AppServiceProvider extends ServiceProvider
             Limit::perMinute(5)->by('min:' . $request->ip()),
             Limit::perDay(20)->by('day:' . $request->ip()),
         ]);
+
+        // Student portal workflow — per signed-in student and per action.
+        $student = fn (Request $request) => 'student:' . (auth('student')->id() ?? $request->ip()) . ':' . $request->route()?->getName();
+        RateLimiter::for('portal-action', fn (Request $request) => Limit::perMinute(10)->by($student($request)));
+        RateLimiter::for('portal-receipt', fn (Request $request) => [
+            Limit::perMinute(5)->by('m:' . $student($request)),
+            Limit::perDay(30)->by('d:' . $student($request)),
+        ]);
+        RateLimiter::for('portal-download', fn (Request $request) => Limit::perMinute(30)->by($student($request)));
     }
 }
