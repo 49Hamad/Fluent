@@ -55,6 +55,14 @@ return [
             'throw' => false,
         ],
 
+        // Bank-transfer receipts — private (never served by URL)
+        'receipts' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/receipts'),
+            'serve' => false,
+            'throw' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
